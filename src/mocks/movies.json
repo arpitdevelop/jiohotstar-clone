@@ -1,0 +1,138 @@
+[
+  {
+    "id": 27205,
+    "title": "Inception",
+    "overview": "Cobb, a skilled thief who steals valuable secrets from deep within the subconscious during the dream state, is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person's idea into a target's subconscious.",
+    "poster_path": "/o0V4w47vHqgbrXYW36n35ST6YiY.jpg",
+    "backdrop_path": "/zt86mbU265g446P31Eopj8qw6vV.jpg",
+    "release_date": "2010-07-15",
+    "vote_average": 8.4,
+    "vote_count": 36125,
+    "runtime": 148,
+    "tagline": "Your mind is the scene of the crime.",
+    "media_type": "movie",
+    "genres": [
+      { "id": 28, "name": "Action" },
+      { "id": 878, "name": "Science Fiction" },
+      { "id": 12, "name": "Adventure" }
+    ],
+    "cast": [
+      { "id": 6193, "name": "Leonardo DiCaprio", "character": "Cobb", "profile_path": "/5BwqwxVE7816N1nhvemh5UX1t6v.jpg" },
+      { "id": 24045, "name": "Joseph Gordon-Levitt", "character": "Arthur", "profile_path": "/4H74s8QL79uR55a4lVoP58H6IrL.jpg" },
+      { "id": 26230, "name": "Elliot Page", "character": "Ariadne", "profile_path": "/c7c6oG17qGzI2B49Es769E4P72s.jpg" },
+      { "id": 2524, "name": "Tom Hardy", "character": "Eames", "profile_path": "/xj44441v2kZ739U2651sYy54.jpg" }
+    ]
+  },
+  {
+    "id": 157336,
+    "title": "Interstellar",
+    "overview": "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.",
+    "poster_path": "/gEU2Qv0tOhvTaRkgZJ6jWl66ztn.jpg",
+    "backdrop_path": "/xJHokZbljvjC3nznW7sbwq8Z38v.jpg",
+    "release_date": "2014-11-05",
+    "vote_average": 8.4,
+    "vote_count": 34320,
+    "runtime": 169,
+    "tagline": "Mankind was born on Earth. It was never meant to die here.",
+    "media_type": "movie",
+    "genres": [
+      { "id": 12, "name": "Adventure" },
+      { "id": 18, "name": "Drama" },
+      { "id": 878, "name": "Science Fiction" }
+    ],
+    "cast": [
+      { "id": 10297, "name": "Matthew McConaughey", "character": "Cooper", "profile_path": "/e9ZQQ7W7181nhve999gJ6e1s6vv.jpg" },
+      { "id": 1813, "name": "Anne Hathaway", "character": "Brand", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" },
+      { "id": 3895, "name": "Jessica Chastain", "character": "Murph", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" }
+    ]
+  },
+  {
+    "id": 155,
+    "title": "The Dark Knight",
+    "overview": "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague the streets. The partnership proves to be effective, but they soon find themselves prey to a reign of chaos unleashed by a rising criminal mastermind known to the terrified citizens of Gotham as the Joker.",
+    "poster_path": "/qJ2tW43eABCqxe1uGg7aePRig5b.jpg",
+    "backdrop_path": "/nMKdUUepfe567YcuS6h63n6N2CD.jpg",
+    "release_date": "2008-07-16",
+    "vote_average": 8.5,
+    "vote_count": 32000,
+    "runtime": 152,
+    "tagline": "Why So Serious?",
+    "media_type": "movie",
+    "genres": [
+      { "id": 28, "name": "Action" },
+      { "id": 80, "name": "Crime" },
+      { "id": 18, "name": "Drama" }
+    ],
+    "cast": [
+      { "id": 3894, "name": "Christian Bale", "character": "Bruce Wayne / Batman", "profile_path": "/b73aGo11nhve7816N5vY8G6IrL.jpg" },
+      { "id": 1810, "name": "Heath Ledger", "character": "Joker", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" },
+      { "id": 3896, "name": "Gary Oldman", "character": "Jim Gordon", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" }
+    ]
+  },
+  {
+    "id": 324857,
+    "title": "Spider-Man: Into the Spider-Verse",
+    "overview": "Struggling to find his place in the world while adjusting to school and life, Brooklyn teenager Miles Morales is bitten by a radioactive spider and develops-superpowers. When the Wilson \"Kingpin\" Fisk builds a super collider, it brings alternate versions of Spider-Man from other dimensions to Miles' world.",
+    "poster_path": "/iiZZmz4w2mHJWmqhs9wU581bC51.jpg",
+    "backdrop_path": "/7dJu7o46295X9rlV3asNu4hdZ15.jpg",
+    "release_date": "2018-12-06",
+    "vote_average": 8.4,
+    "vote_count": 15000,
+    "runtime": 117,
+    "tagline": "More than one wears the mask.",
+    "media_type": "movie",
+    "genres": [
+      { "id": 16, "name": "Animation" },
+      { "id": 28, "name": "Action" },
+      { "id": 12, "name": "Adventure" }
+    ],
+    "cast": [
+      { "id": 11524, "name": "Shameik Moore", "character": "Miles Morales (voice)", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" },
+      { "id": 2184, "name": "Jake Johnson", "character": "Peter B. Parker (voice)", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" },
+      { "id": 12502, "name": "Hailee Steinfeld", "character": "Gwen Stacy (voice)", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" }
+    ]
+  },
+  {
+    "id": 438631,
+    "title": "Dune",
+    "overview": "Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe to ensure the future of his family and his people. As malevolent forces explode into conflict over the planet's exclusive supply of the most precious resource in existence-a commodity capable of unlocking humanity's greatest potential-only those who can conquer their fear will survive.",
+    "poster_path": "/d5NXSklXkiLZIeMKpq4fgRjRXPg.jpg",
+    "backdrop_path": "/lz7UB5HcfzZ174Gep9v6n9zPpxL.jpg",
+    "release_date": "2021-09-15",
+    "vote_average": 7.8,
+    "vote_count": 10500,
+    "runtime": 155,
+    "tagline": "It begins.",
+    "media_type": "movie",
+    "genres": [
+      { "id": 878, "name": "Science Fiction" },
+      { "id": 12, "name": "Adventure" }
+    ],
+    "cast": [
+      { "id": 11906, "name": "Timothée Chalamet", "character": "Paul Atreides", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" },
+      { "id": 5081, "name": "Rebecca Ferguson", "character": "Lady Jessica Atreides", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" },
+      { "id": 1620, "name": "Oscar Isaac", "character": "Duke Leto Atreides", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" }
+    ]
+  },
+  {
+    "id": 507089,
+    "title": "Ad Astra",
+    "overview": "The near future, a time when both hope and hardships drive humanity to look to the stars and beyond. An astronaut travels to the outer edges of the solar system to find his father and unravel a mystery that threatens the survival of our planet. He uncovers secrets which challenge the nature of human existence and our place in the cosmos.",
+    "poster_path": "/xBHv22Zg4y5cCD2ju4guSpXU13t.jpg",
+    "backdrop_path": "/5B6e1nhve7816N5vY8G6IrL.jpg",
+    "release_date": "2019-09-17",
+    "vote_average": 6.1,
+    "vote_count": 6200,
+    "runtime": 123,
+    "tagline": "The answers to our existence are just out of reach.",
+    "media_type": "movie",
+    "genres": [
+      { "id": 878, "name": "Science Fiction" },
+      { "id": 18, "name": "Drama" }
+    ],
+    "cast": [
+      { "id": 287, "name": "Brad Pitt", "character": "Roy McBride", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" },
+      { "id": 217, "name": "Tommy Lee Jones", "character": "H. Clifford McBride", "profile_path": "/5B6e1nhve7816N5vY8G6IrL.jpg" }
+    ]
+  }
+]
