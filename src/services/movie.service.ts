@@ -27,7 +27,7 @@ export const MovieService = {
     if (!hasToken()) return moviesMock as Movie[];
     try {
       const response = await api.get<PaginatedResponse<Movie>>(Endpoints.trending);
-      return response.data.results;
+      return response.data.results.map((movie) => ({ ...movie, media_type: "movie" }));
     } catch (e) {
       console.warn('Failed to fetch trending movies, using mock data:', e);
       return moviesMock as Movie[];
@@ -38,7 +38,7 @@ export const MovieService = {
     if (!hasToken()) return moviesMock as Movie[];
     try {
       const response = await api.get<PaginatedResponse<Movie>>(Endpoints.popular);
-      return response.data.results;
+      return response.data.results.map((movie) => ({ ...movie, media_type: "movie" }));
     } catch (e) {
       console.warn('Failed to fetch popular movies, using mock data:', e);
       return moviesMock as Movie[];
@@ -49,7 +49,7 @@ export const MovieService = {
     if (!hasToken()) return [...moviesMock].reverse() as Movie[];
     try {
       const response = await api.get<PaginatedResponse<Movie>>(Endpoints.topRated);
-      return response.data.results;
+      return response.data.results.map((movie) => ({ ...movie, media_type: "movie" }));
     } catch (e) {
       console.warn('Failed to fetch top rated movies, using mock data:', e);
       return [...moviesMock].reverse() as Movie[];
@@ -60,7 +60,7 @@ export const MovieService = {
     if (!hasToken()) return moviesMock.slice(1, 4) as Movie[];
     try {
       const response = await api.get<PaginatedResponse<Movie>>(Endpoints.upcoming);
-      return response.data.results;
+      return response.data.results.map((movie) => ({ ...movie, media_type: "movie" }));
     } catch (e) {
       console.warn('Failed to fetch upcoming movies, using mock data:', e);
       return moviesMock.slice(1, 4) as Movie[];

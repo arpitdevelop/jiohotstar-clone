@@ -1,10 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
-import { Spacing } from '@/constants/spacing';
-import { useTheme } from '@/hooks/useTheme';
+import { View, Animated } from 'react-native';
 
 export function MovieRowSkeleton() {
-  const { colors } = useTheme();
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -27,46 +24,20 @@ export function MovieRowSkeleton() {
   const items = Array.from({ length: 4 });
 
   return (
-    <View style={styles.container}>
+    <View className="my-md px-lg">
       <Animated.View
-        style={[
-          styles.titleSkeleton,
-          { backgroundColor: colors.border, opacity: pulseAnim },
-        ]}
+        className="mb-md h-5 w-[120px] rounded bg-border"
+        style={{ opacity: pulseAnim }}
       />
-      <View style={styles.row}>
+      <View className="flex-row gap-md">
         {items.map((_, index) => (
           <Animated.View
             key={index}
-            style={[
-              styles.cardSkeleton,
-              { backgroundColor: colors.card, opacity: pulseAnim },
-            ]}
+            className="h-[165px] w-[110px] rounded-lg bg-card"
+            style={{ opacity: pulseAnim }}
           />
         ))}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: Spacing.md,
-    paddingHorizontal: Spacing.lg,
-  },
-  titleSkeleton: {
-    width: 120,
-    height: 20,
-    borderRadius: 4,
-    marginBottom: Spacing.md,
-  },
-  row: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  cardSkeleton: {
-    width: 110,
-    height: 165,
-    borderRadius: 8,
-  },
-});

@@ -14,6 +14,8 @@ export interface Movie {
   runtime?: number | null;
   tagline?: string | null;
   media_type?: 'movie' | 'tv';
+  original_language?: string;
+  number_of_seasons?: number;
 }
 
 export interface CastMember {

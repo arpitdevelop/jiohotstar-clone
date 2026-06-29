@@ -34,21 +34,21 @@ export const useUpcomingMovies = () => {
   });
 };
 
-export const useMovieDetails = (id: number) => {
+export const useMovieDetails = (id: number, enabled = true) => {
   return useQuery({
     queryKey: queryKeys.movies.detail(id),
     queryFn: () => MovieService.getMovieDetails(id),
     staleTime: 5 * 60 * 1000,
-    enabled: !!id,
+    enabled: !!id && enabled,
   });
 };
 
-export const useSimilarMovies = (id: number) => {
+export const useSimilarMovies = (id: number, enabled = true) => {
   return useQuery({
     queryKey: queryKeys.movies.similar(id),
     queryFn: () => MovieService.getSimilarMovies(id),
     staleTime: 5 * 60 * 1000,
-    enabled: !!id,
+    enabled: !!id && enabled,
   });
 };
 

@@ -9,10 +9,7 @@ export default function TabLayout() {
 
   return (
     <NativeTabs
-      blurEffect={
-        isDark ? "systemChromeMaterialDark" : "systemChromeMaterialLight"
-      }
-      backgroundColor="transparent"
+      backgroundColor={colors.tabBarBackground}
       iconColor={colors.tabBarInactive}
       labelStyle={{
         default: {
@@ -30,13 +27,13 @@ export default function TabLayout() {
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/home.png")}
-          renderingMode="template"
+          src={require("@/assets/images/jiohotstar-tab-icon.png")}
+          renderingMode="original"
         />
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile">
-        <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label hidden />
         <NativeTabs.Trigger.Icon
           src={require("@/assets/images/tabIcons/explore.png")}
           renderingMode="template"

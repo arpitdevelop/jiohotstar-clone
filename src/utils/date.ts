@@ -21,3 +21,21 @@ export const formatDate = (dateStr?: string): string => {
     return dateStr;
   }
 };
+
+export const formatShortDate = (dateStr?: string): string => {
+  const date = dateStr ? new Date(dateStr) : new Date();
+  if (Number.isNaN(date.getTime())) return 'N/A';
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+};
+
+export const isRecentlyAdded = (dateStr?: string): boolean => {
+  if (!dateStr) return false;
+  try {
+    const date = new Date(dateStr);
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 30);
+    return date >= cutoff;
+  } catch {
+    return false;
+  }
+};

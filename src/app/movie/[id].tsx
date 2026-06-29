@@ -1,40 +1,56 @@
-import { CastCard } from "@/components/movie/CastCard";
-import { WatchlistButton } from "@/components/movie/WatchlistButton";
+import { AppImage } from "@/components/common/AppImage";
+import { ScreenBackground } from "@/components/home/ScreenBackground";
+import {
+  buildMockEpisodes,
+  EpisodeSection,
+} from "@/components/movie/EpisodeSection";
+import { MediaActionRow } from "@/components/movie/MediaActionRow";
+import { MediaTrailerHero } from "@/components/movie/MediaTrailerHero";
 import { MovieRow } from "@/components/sections/MovieRow";
-import { Spacing } from "@/constants/spacing";
-import { useTheme } from "@/hooks/useTheme";
 import { useMovieDetails, useSimilarMovies } from "@/queries/movie.queries";
-import { getReleaseYear } from "@/utils/date";
-import { formatDuration } from "@/utils/duration";
-import { getBackdropUrl } from "@/utils/image";
+import { useSimilarTv, useTvDetails } from "@/queries/tv.queries";
+import { formatShortDate, getReleaseYear, isRecentlyAdded } from "@/utils/date";
+import { getPosterUrl } from "@/utils/image";
+import { getContentRating, getLanguageName } from "@/utils/language";
+import { SharedImageKind } from "@/utils/movie-navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import {
   ActivityIndicator,
-  Dimensions,
-  FlatList,
-  Image,
   ScrollView,
   Share,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const { width } = Dimensions.get("window");
-
 export default function MovieDetailScreen() {
-  const { id } = useLocalSearchParams();
+  const { id, type, sharedImageKind } = useLocalSearchParams<{
+    id: string;
+    type?: string;
+    sharedImageKind?: SharedImageKind;
+  }>();
   const movieId = Number(id);
+  const mediaType = type === "tv" ? "tv" : "movie";
+  const isTv = mediaType === "tv";
   const router = useRouter();
-  const { colors } = useTheme();
+  const imageKind: SharedImageKind =
+    sharedImageKind === "poster" ? "poster" : "backdrop";
 
-  // Queries
-  const { data: movie, isLoading, error } = useMovieDetails(movieId);
+  const movieDetails = useMovieDetails(movieId, mediaType === "movie");
+  const tvDetails = useTvDetails(movieId, mediaType === "tv");
+  const movieSimilar = useSimilarMovies(movieId, mediaType === "movie");
+  const tvSimilar = useSimilarTv(movieId, mediaType === "tv");
+
+  const {
+    data: movie,
+    isLoading,
+    error,
+  } = mediaType === "tv" ? tvDetails : movieDetails;
   const { data: similarMovies, isLoading: similarLoading } =
-    useSimilarMovies(movieId);
+    mediaType === "tv" ? tvSimilar : movieSimilar;
 
   const handleShare = async () => {
     if (!movie) return;
@@ -49,369 +65,136 @@ export default function MovieDetailScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <ActivityIndicator size="large" color={colors.accent} />
+      <View className="flex-1 items-center justify-center bg-black">
+        <ScreenBackground />
+        <ActivityIndicator size="large" color="#0078FF" />
       </View>
     );
   }
 
   if (error || !movie) {
     return (
-      <View style={[styles.center, { backgroundColor: colors.background }]}>
-        <Text style={{ color: colors.text, marginBottom: Spacing.md }}>
+      <View className="flex-1 items-center justify-center bg-black">
+        <ScreenBackground />
+        <Text className="mb-md text-foreground">
           Failed to load movie details.
         </Text>
         <TouchableOpacity
           onPress={() => router.back()}
-          style={[styles.backBtn, { backgroundColor: colors.accent }]}
+          className="rounded-full bg-accent px-xl py-2.5"
         >
-          <Text style={{ color: "#FFFFFF", fontWeight: "bold" }}>Go Back</Text>
+          <Text className="font-bold text-white">Go Back</Text>
         </TouchableOpacity>
       </View>
     );
   }
 
-  const releaseYear = getReleaseYear(
-    movie.release_date || movie.first_air_date,
-  );
-  const duration = formatDuration(movie.runtime);
-  const genresText = movie.genres?.map((g) => g.name).join(" • ") || "";
-  const cast = movie.credits?.cast || [];
+  const title = movie.title || movie.name || "";
+  const releaseDate = movie.release_date || movie.first_air_date;
+  const releaseYear = getReleaseYear(releaseDate);
+  const genres = movie.genres?.map((g) => g.name) ?? [];
+  const language = getLanguageName(movie.original_language);
+  const rating = getContentRating(movie.vote_average);
+  const showNewBadge = isRecentlyAdded(releaseDate);
+  const episodes = isTv ? buildMockEpisodes(title, movie.backdrop_path) : [];
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* Backdrop Image */}
-        <View style={styles.backdropContainer}>
-          <Image
-            source={{ uri: getBackdropUrl(movie.backdrop_path, "original") }}
-            style={[styles.backdrop, { backgroundColor: colors.card }]}
-            resizeMode="cover"
-          />
-          {/* Overlay gradient simulator */}
-          <View style={styles.overlay} />
-          <View
-            style={[
-              styles.gradientBottom,
-              { backgroundColor: colors.background },
-            ]}
+    <View className="flex-1 bg-black">
+      <ScreenBackground />
+      <StatusBar style="light" />
+
+      <SafeAreaView className="flex-1" edges={["top"]}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerClassName="pb-xxl"
+        >
+          <MediaTrailerHero
+            backdropPath={movie.backdrop_path}
+            posterPath={movie.poster_path}
+            imageKind={imageKind}
+            onClose={() => router.back()}
           />
 
-          {/* Floating Back Button */}
-          <SafeAreaView style={styles.floatingHeader}>
-            <TouchableOpacity
-              onPress={() => router.back()}
-              style={[
-                styles.iconButton,
-                { backgroundColor: "rgba(0,0,0,0.5)" },
-              ]}
-            >
-              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
-          </SafeAreaView>
-        </View>
-
-        {/* Info Content */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.title}>{movie.title || movie.name}</Text>
-
-          {movie.tagline ? (
-            <Text style={[styles.tagline, { color: colors.textSecondary }]}>
-              "{movie.tagline}"
-            </Text>
-          ) : null}
-
-          {/* Metadata Row */}
-          <View style={styles.metaRow}>
-            <View style={[styles.ratingBadge, { borderColor: colors.border }]}>
-              <Ionicons name="star" size={12} color={colors.premium} />
-              <Text style={[styles.ratingText, { color: colors.text }]}>
-                {movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
+          <View className="mt-lg items-center px-lg">
+            {movie.poster_path ? (
+              <AppImage
+                source={{ uri: getPosterUrl(movie.poster_path, "w500") }}
+                contentFit="contain"
+                className="mb-sm h-20 w-56"
+              />
+            ) : (
+              <Text className="mb-sm text-center text-2xl font-extrabold text-white">
+                {title}
               </Text>
-            </View>
-            <Text style={[styles.metaText, { color: colors.textSecondary }]}>
-              {releaseYear}
-            </Text>
-            {movie.runtime ? (
-              <Text style={[styles.metaText, { color: colors.textSecondary }]}>
-                {duration}
+            )}
+
+            {showNewBadge ? (
+              <Text className="mb-sm text-sm font-semibold text-[#4DB8FF]">
+                Newly Added
               </Text>
             ) : null}
+
+            <View className="flex-row flex-wrap items-center justify-center gap-2">
+              <Text className="text-sm text-white/70">{releaseYear}</Text>
+              <Text className="text-sm text-white/40">•</Text>
+              <View className="rounded bg-white/15 px-1.5 py-0.5">
+                <Text className="text-xs font-medium text-white/90">
+                  {rating}
+                </Text>
+              </View>
+              <Text className="text-sm text-white/40">•</Text>
+              <Text className="text-sm text-white/70">{language}</Text>
+            </View>
           </View>
 
-          {genresText ? (
-            <Text style={[styles.genresText, { color: colors.textSecondary }]}>
-              {genresText}
+          <TouchableOpacity
+            activeOpacity={0.85}
+            className="mx-lg mt-lg flex-row items-center justify-center gap-2 rounded-full py-3.5"
+            style={{ backgroundColor: "#D4DCE6" }}
+            onPress={() =>
+              alert(isTv ? "Playing latest episode..." : "Playing movie...")
+            }
+          >
+            <Ionicons name="play" size={18} color="#000000" />
+            <Text className="text-[15px] font-bold text-black">
+              {isTv ? "Watch Latest Episode" : "Watch Now"}
+            </Text>
+            {isTv ? (
+              <Text className="text-sm text-black/60">
+                {formatShortDate(releaseDate)}
+              </Text>
+            ) : null}
+          </TouchableOpacity>
+
+          {genres.length > 0 ? (
+            <Text className="mt-lg px-lg text-center text-xs text-white/60">
+              {genres.join(" | ")}
             </Text>
           ) : null}
 
-          {/* Watch Now Button */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.playBtn, { backgroundColor: colors.accent }]}
-            onPress={() => alert("Playing movie stream...")}
-          >
-            <Ionicons name="play" size={22} color="#FFFFFF" />
-            <Text style={styles.playBtnText}>Watch Now</Text>
-          </TouchableOpacity>
+          <Text className="mt-md px-lg text-[13px] leading-5 text-white/60">
+            {movie.overview}
+          </Text>
 
-          {/* Action Row */}
-          <View
-            style={[styles.actionRow, { borderBottomColor: colors.border }]}
-          >
-            <WatchlistButton movie={movie} variant="vertical" />
-
-            <TouchableOpacity onPress={handleShare} style={styles.actionBtn}>
-              <View
-                style={[
-                  styles.iconCircle,
-                  {
-                    backgroundColor: "rgba(255,255,255,0.08)",
-                    borderColor: colors.border,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="share-social-outline"
-                  size={20}
-                  color={colors.text}
-                />
-              </View>
-              <Text
-                style={[styles.actionBtnText, { color: colors.textSecondary }]}
-              >
-                Share
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => alert("Downloading offline...")}
-              style={styles.actionBtn}
-            >
-              <View
-                style={[
-                  styles.iconCircle,
-                  {
-                    backgroundColor: "rgba(255,255,255,0.08)",
-                    borderColor: colors.border,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="download-outline"
-                  size={20}
-                  color={colors.text}
-                />
-              </View>
-              <Text
-                style={[styles.actionBtnText, { color: colors.textSecondary }]}
-              >
-                Download
-              </Text>
-            </TouchableOpacity>
+          <View className="mt-lg">
+            <MediaActionRow movie={movie} onShare={handleShare} />
           </View>
 
-          {/* Overview / Story */}
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>
-              Storyline
-            </Text>
-            <Text
-              style={[styles.overviewText, { color: colors.textSecondary }]}
-            >
-              {movie.overview}
-            </Text>
-          </View>
+          {isTv && episodes.length > 0 ? (
+            <EpisodeSection episodes={episodes} />
+          ) : null}
 
-          {/* Cast */}
-          {cast.length > 0 && (
-            <View style={styles.section}>
-              <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                Cast & Crew
-              </Text>
-              <FlatList
-                data={cast}
-                renderItem={({ item }) => <CastCard cast={item} />}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={(item) => item.id.toString()}
-                contentContainerStyle={styles.castList}
-                ItemSeparatorComponent={() => (
-                  <View style={{ width: Spacing.md }} />
-                )}
-              />
-            </View>
-          )}
-
-          {/* Similar Movies */}
-          {similarMovies && similarMovies.length > 0 && (
-            <View style={styles.similarSection}>
+          {similarMovies && similarMovies.length > 0 ? (
+            <View className="mt-sm">
               <MovieRow
                 title="More Like This"
                 movies={similarMovies}
                 isLoading={similarLoading}
               />
             </View>
-          )}
-        </View>
-      </ScrollView>
+          ) : null}
+        </ScrollView>
+      </SafeAreaView>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: Spacing.xxl,
-  },
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  backBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: 6,
-  },
-  backdropContainer: {
-    width: "100%",
-    height: 250,
-    position: "relative",
-  },
-  backdrop: {
-    width: "100%",
-    height: "100%",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: "rgba(0, 0, 0, 0.25)",
-  },
-  gradientBottom: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 80,
-  },
-  floatingHeader: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
-  },
-  iconButton: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: Spacing.lg,
-    marginTop: Spacing.sm,
-  },
-  infoContainer: {
-    paddingHorizontal: Spacing.lg,
-    marginTop: -20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    marginBottom: 4,
-  },
-  tagline: {
-    fontSize: 13,
-    fontStyle: "italic",
-    marginBottom: Spacing.md,
-  },
-  metaRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
-    marginBottom: Spacing.sm,
-  },
-  ratingBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    paddingVertical: 2,
-    paddingHorizontal: 6,
-    borderRadius: 4,
-    gap: 4,
-  },
-  ratingText: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  metaText: {
-    fontSize: 13,
-    fontWeight: "500",
-  },
-  genresText: {
-    fontSize: 12,
-    marginBottom: Spacing.lg,
-  },
-  playBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 8,
-    gap: 8,
-    marginBottom: Spacing.lg,
-  },
-  playBtnText: {
-    color: "#FFFFFF",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  actionRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-    paddingBottom: Spacing.lg,
-    borderBottomWidth: 1,
-    marginBottom: Spacing.lg,
-  },
-  actionBtn: {
-    alignItems: "center",
-    gap: 6,
-  },
-  iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-  },
-  actionBtnText: {
-    fontSize: 11,
-    fontWeight: "500",
-  },
-  section: {
-    marginBottom: Spacing.xl,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginBottom: Spacing.sm,
-  },
-  overviewText: {
-    fontSize: 13,
-    lineHeight: 20,
-  },
-  castList: {
-    paddingVertical: Spacing.xs,
-  },
-  similarSection: {
-    marginTop: Spacing.sm,
-    marginHorizontal: -Spacing.lg, // negate container padding to span full screen width
-  },
-});

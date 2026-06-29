@@ -1,10 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, FlatList } from 'react-native';
 import { Movie } from '@/types/movie';
 import { MovieCard } from '../movie/MovieCard';
 import { MovieRowSkeleton } from '../skeleton/MovieRowSkeleton';
-import { Spacing } from '@/constants/spacing';
-import { useTheme } from '@/hooks/useTheme';
 
 interface MovieRowProps {
   title: string;
@@ -13,8 +11,6 @@ interface MovieRowProps {
 }
 
 export function MovieRow({ title, movies = [], isLoading = false }: MovieRowProps) {
-  const { colors } = useTheme();
-
   if (isLoading) {
     return <MovieRowSkeleton />;
   }
@@ -24,8 +20,8 @@ export function MovieRow({ title, movies = [], isLoading = false }: MovieRowProp
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.text }]}>
+    <View className="my-sm">
+      <Text className="mb-sm px-lg text-base font-bold tracking-wide text-white">
         {title}
       </Text>
       <FlatList
@@ -33,30 +29,10 @@ export function MovieRow({ title, movies = [], isLoading = false }: MovieRowProp
         renderItem={({ item }) => <MovieCard movie={item} />}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
+        contentContainerClassName="px-lg pb-xs"
         keyExtractor={(item) => item.id.toString()}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        ItemSeparatorComponent={() => <View className="w-md" />}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: Spacing.sm,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '700',
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.sm,
-    letterSpacing: 0.25,
-  },
-  listContent: {
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.xs,
-  },
-  separator: {
-    width: Spacing.md,
-  },
-});

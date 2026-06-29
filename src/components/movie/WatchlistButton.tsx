@@ -1,14 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import { TouchableOpacity, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Movie } from '@/types/movie';
 import { useWatchlistStore } from '@/store/watchlist.store';
-import { Spacing } from '@/constants/spacing';
 import { useTheme } from '@/hooks/useTheme';
 
 interface WatchlistButtonProps {
   movie: Movie;
-  variant?: 'vertical' | 'horizontal';
+  variant?: 'vertical' | 'horizontal' | 'minimal';
 }
 
 export function WatchlistButton({ movie, variant = 'vertical' }: WatchlistButtonProps) {
@@ -25,82 +24,62 @@ export function WatchlistButton({ movie, variant = 'vertical' }: WatchlistButton
     }
   };
 
+  if (variant === 'minimal') {
+    return (
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={handlePress}
+        className="items-center gap-2"
+      >
+        <Ionicons
+          name={isAdded ? 'checkmark' : 'add'}
+          size={22}
+          color={isAdded ? colors.accent : '#FFFFFF'}
+        />
+        <Text className="text-xs font-medium text-white/80">Watchlist</Text>
+      </TouchableOpacity>
+    );
+  }
+
   if (variant === 'horizontal') {
     return (
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={handlePress}
-        style={[
-          styles.horizontalBtn,
-          { 
-            backgroundColor: isAdded ? colors.card : 'rgba(255, 255, 255, 0.1)',
-            borderColor: colors.border
-          }
-        ]}
+        className="flex-1 flex-row items-center justify-center gap-sm rounded-lg border border-border px-xl py-3"
+        style={{ backgroundColor: isAdded ? colors.card : 'rgba(255, 255, 255, 0.1)' }}
       >
         <Ionicons
           name={isAdded ? 'checkmark' : 'add'}
           size={20}
           color={isAdded ? colors.accent : colors.text}
         />
-        <Text style={[styles.horizontalText, { color: colors.text }]}>
+        <Text className="text-sm font-semibold text-foreground">
           {isAdded ? 'In Watchlist' : 'Add to Watchlist'}
         </Text>
       </TouchableOpacity>
     );
   }
 
-  // Default vertical style (icon on top, label below)
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={handlePress}
-      style={styles.verticalBtn}
+      className="items-center gap-1.5"
     >
-      <View style={[styles.iconCircle, { backgroundColor: isAdded ? colors.card : 'rgba(255,255,255,0.08)', borderColor: colors.border }]}>
+      <View
+        className="h-11 w-11 items-center justify-center rounded-full border border-border"
+        style={{ backgroundColor: isAdded ? colors.card : 'rgba(255,255,255,0.08)' }}
+      >
         <Ionicons
           name={isAdded ? 'checkmark' : 'add'}
           size={22}
           color={isAdded ? colors.accent : colors.text}
         />
       </View>
-      <Text style={[styles.verticalText, { color: colors.textSecondary }]}>
+      <Text className="text-[11px] font-medium text-muted">
         Watchlist
       </Text>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  verticalBtn: {
-    alignItems: 'center',
-    gap: 6,
-  },
-  iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-  },
-  verticalText: {
-    fontSize: 11,
-    fontWeight: '500',
-  },
-  horizontalBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: 8,
-    borderWidth: 1,
-    gap: Spacing.sm,
-    flex: 1,
-  },
-  horizontalText: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});

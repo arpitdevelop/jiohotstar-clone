@@ -2,13 +2,12 @@ import React from 'react';
 import {
   View,
   Text,
-  StyleSheet,
-  Image,
   FlatList,
   Dimensions,
-  SafeAreaView,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppImage } from '@/components/common/AppImage';
 import { useProfileDetails } from '@/queries/profile.queries';
 import { useWatchlistStore } from '@/store/watchlist.store';
 import { MovieCard } from '@/components/movie/MovieCard';
@@ -22,7 +21,7 @@ const CARD_WIDTH = (width - Spacing.lg * 2 - Spacing.md * 2) / 3;
 const CARD_HEIGHT = CARD_WIDTH * 1.5;
 
 export default function ProfileScreen() {
-  const { colors, theme } = useTheme();
+  const { colors } = useTheme();
   const { data: profile, isLoading } = useProfileDetails();
   const { watchlist } = useWatchlistStore();
   const router = useRouter();
@@ -30,68 +29,75 @@ export default function ProfileScreen() {
   const renderHeader = () => {
     if (isLoading || !profile) {
       return (
-        <View style={styles.profileHeader}>
-          <Text style={{ color: colors.textSecondary }}>Loading profile...</Text>
+        <View className="mb-lg">
+          <Text className="text-muted">Loading profile...</Text>
         </View>
       );
     }
 
     return (
-      <View style={styles.profileHeader}>
-        <View style={styles.userInfoRow}>
-          <Image source={{ uri: profile.avatar }} style={[styles.avatar, { borderColor: colors.border }]} />
-          <View style={styles.userTextContainer}>
-            <Text style={[styles.userName, { color: colors.text }]}>{profile.name}</Text>
-            <Text style={[styles.userEmail, { color: colors.textSecondary }]}>{profile.email}</Text>
-            <Text style={[styles.userMobile, { color: colors.textSecondary }]}>{profile.mobileNo}</Text>
+      <View className="mb-lg">
+        <View className="mb-xl flex-row items-center gap-lg">
+          <AppImage
+            source={{ uri: profile.avatar }}
+            className="h-[72px] w-[72px] rounded-full border-2 border-border"
+          />
+          <View className="flex-1 justify-center">
+            <Text className="mb-0.5 text-xl font-bold text-foreground">{profile.name}</Text>
+            <Text className="mb-0.5 text-[13px] text-muted">{profile.email}</Text>
+            <Text className="text-xs text-muted">{profile.mobileNo}</Text>
           </View>
         </View>
 
-        {/* Subscription Card */}
-        <View style={[styles.subscriptionCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <View style={styles.subLeft}>
-            <Ionicons name="shield-checkmark" size={24} color={colors.premium} />
+        <View className="mb-xxl flex-row items-center justify-between rounded-[10px] border border-border bg-card p-md">
+          <View className="flex-row items-center gap-md">
+            <Ionicons name="shield-checkmark" size={24} color="#E2B616" />
             <View>
-              <Text style={[styles.subTitle, { color: colors.text }]}>JioHotstar {profile.subscriptionType}</Text>
-              <Text style={[styles.subExpiry, { color: colors.textSecondary }]}>Active • Member since {profile.memberSince}</Text>
+              <Text className="text-[15px] font-bold text-foreground">
+                JioHotstar {profile.subscriptionType}
+              </Text>
+              <Text className="mt-0.5 text-[11px] text-muted">
+                Active • Member since {profile.memberSince}
+              </Text>
             </View>
           </View>
-          <View style={[styles.premiumBadge, { backgroundColor: colors.premium }]}>
-            <Text style={styles.premiumText}>GOLD</Text>
+          <View className="rounded bg-premium px-2 py-1">
+            <Text className="text-[9px] font-extrabold text-black">GOLD</Text>
           </View>
         </View>
 
-        {/* Section Title */}
-        <Text style={[styles.watchlistTitle, { color: colors.text }]}>My Watchlist ({watchlist.length})</Text>
+        <Text className="mb-md text-lg font-bold text-foreground">
+          My Watchlist ({watchlist.length})
+        </Text>
       </View>
     );
   };
 
   const renderEmptyWatchlist = () => {
     return (
-      <View style={styles.emptyContainer}>
-        <Ionicons name="bookmark-outline" size={48} color={colors.textSecondary} style={{ marginBottom: Spacing.sm }} />
-        <Text style={[styles.emptyText, { color: colors.text }]}>Your watchlist is empty</Text>
-        <Text style={[styles.emptySubtext, { color: colors.textSecondary }]}>
+      <View className="items-center justify-center px-xxl py-[60px]">
+        <Ionicons name="bookmark-outline" size={48} color={colors.textSecondary} style={{ marginBottom: 8 }} />
+        <Text className="mb-1 text-base font-semibold text-foreground">Your watchlist is empty</Text>
+        <Text className="mb-xl text-center text-[13px] leading-[18px] text-muted">
           Explore movies and add them to your watchlist to watch them here.
         </Text>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={() => router.push('/')}
-          style={[styles.exploreBtn, { backgroundColor: colors.accent }]}
+          className="rounded-md bg-accent px-xl py-2.5"
         >
-          <Text style={styles.exploreBtnText}>Explore Movies</Text>
+          <Text className="text-sm font-bold text-white">Explore Movies</Text>
         </TouchableOpacity>
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView className="flex-1 bg-background">
       <FlatList
         data={watchlist}
         renderItem={({ item }) => (
-          <View style={styles.gridItem}>
+          <View className="mb-md flex-[0.33] items-center">
             <MovieCard movie={item} width={CARD_WIDTH} height={CARD_HEIGHT} />
           </View>
         )}
@@ -99,120 +105,9 @@ export default function ProfileScreen() {
         keyExtractor={(item) => item.id.toString()}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmptyWatchlist}
-        contentContainerStyle={styles.listContent}
+        contentContainerClassName="px-lg pt-lg pb-xxl"
         showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  listContent: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.lg,
-    paddingBottom: Spacing.xxl,
-  },
-  profileHeader: {
-    marginBottom: Spacing.lg,
-  },
-  userInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.xl,
-    gap: Spacing.lg,
-  },
-  avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 2,
-  },
-  userTextContainer: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  userName: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  userEmail: {
-    fontSize: 13,
-    marginBottom: 2,
-  },
-  userMobile: {
-    fontSize: 12,
-  },
-  subscriptionCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: Spacing.md,
-    borderRadius: 10,
-    borderWidth: 1,
-    marginBottom: Spacing.xxl,
-  },
-  subLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-  },
-  subTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  subExpiry: {
-    fontSize: 11,
-    marginTop: 2,
-  },
-  premiumBadge: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  premiumText: {
-    fontSize: 9,
-    fontWeight: '800',
-    color: '#000000',
-  },
-  watchlistTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: Spacing.md,
-  },
-  gridItem: {
-    flex: 1/3,
-    marginBottom: Spacing.md,
-    alignItems: 'center',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 60,
-    paddingHorizontal: Spacing.xxl,
-  },
-  emptyText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-  },
-  emptySubtext: {
-    fontSize: 13,
-    textAlign: 'center',
-    marginBottom: Spacing.xl,
-    lineHeight: 18,
-  },
-  exploreBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: 6,
-  },
-  exploreBtnText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-});

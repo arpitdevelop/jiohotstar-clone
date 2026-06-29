@@ -1,12 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Dimensions } from 'react-native';
-import { Spacing } from '@/constants/spacing';
-import { useTheme } from '@/hooks/useTheme';
-
-const { width } = Dimensions.get('window');
+import { View, Animated } from 'react-native';
 
 export function CarouselSkeleton() {
-  const { colors } = useTheme();
   const pulseAnim = useRef(new Animated.Value(0.3)).current;
 
   useEffect(() => {
@@ -27,38 +22,28 @@ export function CarouselSkeleton() {
   }, [pulseAnim]);
 
   return (
-    <View style={styles.container}>
+    <View className="h-[350px] w-full">
       <Animated.View
-        style={[
-          styles.carousel,
-          { backgroundColor: colors.card, opacity: pulseAnim },
-        ]}
+        className="h-full w-full justify-end bg-card"
+        style={{ opacity: pulseAnim }}
       >
-        <View style={styles.content}>
+        <View className="gap-sm p-xl">
           <Animated.View
-            style={[
-              styles.textLine1,
-              { backgroundColor: colors.border, opacity: pulseAnim },
-            ]}
+            className="h-7 w-[200px] rounded-md bg-border"
+            style={{ opacity: pulseAnim }}
           />
           <Animated.View
-            style={[
-              styles.textLine2,
-              { backgroundColor: colors.border, opacity: pulseAnim },
-            ]}
+            className="h-4 w-4/5 rounded bg-border"
+            style={{ opacity: pulseAnim }}
           />
-          <View style={styles.buttons}>
+          <View className="mt-md flex-row gap-md">
             <Animated.View
-              style={[
-                styles.button,
-                { backgroundColor: colors.border, opacity: pulseAnim },
-              ]}
+              className="h-9 w-[100px] rounded-md bg-border"
+              style={{ opacity: pulseAnim }}
             />
             <Animated.View
-              style={[
-                styles.button,
-                { backgroundColor: colors.border, opacity: pulseAnim },
-              ]}
+              className="h-9 w-[100px] rounded-md bg-border"
+              style={{ opacity: pulseAnim }}
             />
           </View>
         </View>
@@ -66,39 +51,3 @@ export function CarouselSkeleton() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: 350,
-  },
-  carousel: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'flex-end',
-  },
-  content: {
-    padding: Spacing.xl,
-    gap: Spacing.sm,
-  },
-  textLine1: {
-    width: 200,
-    height: 28,
-    borderRadius: 6,
-  },
-  textLine2: {
-    width: '80%',
-    height: 16,
-    borderRadius: 4,
-  },
-  buttons: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-    marginTop: Spacing.md,
-  },
-  button: {
-    width: 100,
-    height: 36,
-    borderRadius: 6,
-  },
-});
