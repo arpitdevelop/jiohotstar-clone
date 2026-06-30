@@ -1,7 +1,6 @@
 import { CategoryPillBar } from "@/components/home/CategoryPillBar";
 import { ForYouHeader } from "@/components/home/ForYouHeader";
 import { HomeTopButtons } from "@/components/home/HomeTopButtons";
-import { PromoBanner } from "@/components/home/PromoBanner";
 import { ScreenBackground } from "@/components/home/ScreenBackground";
 import { FeaturedCarousel } from "@/components/sections/FeaturedCarousel";
 import { MovieRow } from "@/components/sections/MovieRow";
@@ -13,13 +12,13 @@ import {
   useTrendingMovies,
   useUpcomingMovies,
 } from "@/queries/movie.queries";
+import { useProfileDetails } from "@/queries/profile.queries";
 import {
   useOnTheAirTv,
   usePopularTv,
   useTopRatedTv,
   useTrendingTv,
 } from "@/queries/tv.queries";
-import { useProfileDetails } from "@/queries/profile.queries";
 import { useHomeCategoryStore } from "@/store/home-category.store";
 import { StatusBar } from "expo-status-bar";
 import { ScrollView, View } from "react-native";
@@ -106,9 +105,9 @@ export default function HomeScreen() {
                 isLoading={latest.isLoading}
               />
 
-              <View className="mt-md">
+              {/* <View className="mt-md">
                 <PromoBanner />
-              </View>
+              </View> */}
             </View>
           )}
         </ScrollView>

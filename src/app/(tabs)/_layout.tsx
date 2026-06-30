@@ -33,10 +33,10 @@ export default function TabLayout() {
       </NativeTabs.Trigger>
 
       <NativeTabs.Trigger name="profile">
-        <NativeTabs.Trigger.Label hidden />
+        <NativeTabs.Trigger.Label>My Space</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require("@/assets/images/tabIcons/explore.png")}
-          renderingMode="template"
+          src={require("@/assets/images/profile-tab-icon.png")}
+          renderingMode="original"
         />
       </NativeTabs.Trigger>
     </NativeTabs>

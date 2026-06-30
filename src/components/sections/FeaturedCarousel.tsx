@@ -1,11 +1,19 @@
 import { AppImage } from "@/components/common/AppImage";
 import { useWatchlistStore } from "@/store/watchlist.store";
 import { Movie } from "@/types/movie";
-import { buildMovieDetailRoute } from "@/utils/movie-navigation";
 import { getBackdropUrl } from "@/utils/image";
+import { buildMovieDetailRoute } from "@/utils/movie-navigation";
 import { Ionicons } from "@expo/vector-icons";
+import { GlassView, isGlassEffectAPIAvailable } from "expo-glass-effect";
 import { Link } from "expo-router";
-import { Dimensions, Pressable, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -29,9 +37,18 @@ function getMovieMetadata(movie: Movie): string {
 export function FeaturedCarousel({ movies }: FeaturedCarouselProps) {
   const { addToWatchlist, removeFromWatchlist, inWatchlist } =
     useWatchlistStore();
+  const useGlass = Platform.OS === "ios" && isGlassEffectAPIAvailable();
 
   const renderItem = ({ item }: { item: Movie }) => {
     const isAdded = inWatchlist(item.id);
+    const newlyAddedPill = (
+      <View className="flex-row items-center gap-1 px-2.5 py-1">
+        <Text className="text-[10px]">🎉</Text>
+        <Text className="text-[10px] font-semibold text-white">
+          Newly Added
+        </Text>
+      </View>
+    );
 
     return (
       <View
@@ -66,11 +83,20 @@ export function FeaturedCarousel({ movies }: FeaturedCarouselProps) {
               </View>
             </Link.AppleZoom>
 
-            <View className="absolute left-md top-md flex-row items-center gap-1 rounded-full bg-black/60 px-2.5 py-1">
-              <Text className="text-[10px]">🎉</Text>
-              <Text className="text-[10px] font-semibold text-white">
-                Newly Added
-              </Text>
+            <View className="absolute left-md top-md">
+              {useGlass ? (
+                <GlassView
+                  glassEffectStyle="regular"
+                  colorScheme="dark"
+                  style={{ borderRadius: 999, overflow: "hidden" }}
+                >
+                  {newlyAddedPill}
+                </GlassView>
+              ) : (
+                <View className="overflow-hidden rounded-full border border-white/15 bg-white/10">
+                  {newlyAddedPill}
+                </View>
+              )}
             </View>
 
             <View className="absolute bottom-md left-md right-20">

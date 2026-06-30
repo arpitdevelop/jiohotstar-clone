@@ -5,6 +5,7 @@ export const Endpoints = {
   upcoming: "/movie/upcoming",
   movieDetails: (id: number) => `/movie/${id}`,
   movieCredits: (id: number) => `/movie/${id}/credits`,
+  movieVideos: (id: number) => `/movie/${id}/videos`,
   similarMovies: (id: number) => `/movie/${id}/similar`,
   searchMovies: "/search/movie",
   trendingTv: "/trending/tv/day",
@@ -13,5 +14,6 @@ export const Endpoints = {
   onTheAirTv: "/tv/on_the_air",
   tvDetails: (id: number) => `/tv/${id}`,
   tvCredits: (id: number) => `/tv/${id}/credits`,
+  tvVideos: (id: number) => `/tv/${id}/videos`,
   similarTv: (id: number) => `/tv/${id}/similar`,
 } as const;

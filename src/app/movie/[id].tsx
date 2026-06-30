@@ -1,4 +1,3 @@
-import { AppImage } from "@/components/common/AppImage";
 import { ScreenBackground } from "@/components/home/ScreenBackground";
 import {
   buildMockEpisodes,
@@ -7,23 +6,16 @@ import {
 import { MediaActionRow } from "@/components/movie/MediaActionRow";
 import { MediaTrailerHero } from "@/components/movie/MediaTrailerHero";
 import { MovieRow } from "@/components/sections/MovieRow";
+import { MovieDetailSkeleton } from "@/components/skeleton/MovieDetailSkeleton";
 import { useMovieDetails, useSimilarMovies } from "@/queries/movie.queries";
 import { useSimilarTv, useTvDetails } from "@/queries/tv.queries";
 import { formatShortDate, getReleaseYear, isRecentlyAdded } from "@/utils/date";
-import { getPosterUrl } from "@/utils/image";
 import { getContentRating, getLanguageName } from "@/utils/language";
 import { SharedImageKind } from "@/utils/movie-navigation";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-  ActivityIndicator,
-  ScrollView,
-  Share,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Share, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MovieDetailScreen() {
@@ -63,16 +55,7 @@ export default function MovieDetailScreen() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center bg-black">
-        <ScreenBackground />
-        <ActivityIndicator size="large" color="#0078FF" />
-      </View>
-    );
-  }
-
-  if (error || !movie) {
+  if (!isLoading && (error || !movie)) {
     return (
       <View className="flex-1 items-center justify-center bg-black">
         <ScreenBackground />
@@ -89,14 +72,15 @@ export default function MovieDetailScreen() {
     );
   }
 
-  const title = movie.title || movie.name || "";
-  const releaseDate = movie.release_date || movie.first_air_date;
+  const title = movie?.title || movie?.name || "";
+  const releaseDate = movie?.release_date || movie?.first_air_date;
   const releaseYear = getReleaseYear(releaseDate);
-  const genres = movie.genres?.map((g) => g.name) ?? [];
-  const language = getLanguageName(movie.original_language);
-  const rating = getContentRating(movie.vote_average);
+  const genres = movie?.genres?.map((g) => g.name) ?? [];
+  const language = getLanguageName(movie?.original_language);
+  const rating = getContentRating(movie?.vote_average);
   const showNewBadge = isRecentlyAdded(releaseDate);
-  const episodes = isTv ? buildMockEpisodes(title, movie.backdrop_path) : [];
+  const episodes =
+    isTv && movie ? buildMockEpisodes(title, movie.backdrop_path) : [];
 
   return (
     <View className="flex-1 bg-black">
@@ -109,24 +93,22 @@ export default function MovieDetailScreen() {
           contentContainerClassName="pb-xxl"
         >
           <MediaTrailerHero
-            backdropPath={movie.backdrop_path}
-            posterPath={movie.poster_path}
+            mediaId={movieId}
+            mediaType={mediaType}
+            backdropPath={movie?.backdrop_path ?? null}
+            posterPath={movie?.poster_path ?? null}
             imageKind={imageKind}
             onClose={() => router.back()}
           />
 
+          {isLoading ? (
+            <MovieDetailSkeleton />
+          ) : movie ? (
+            <>
           <View className="mt-lg items-center px-lg">
-            {movie.poster_path ? (
-              <AppImage
-                source={{ uri: getPosterUrl(movie.poster_path, "w500") }}
-                contentFit="contain"
-                className="mb-sm h-20 w-56"
-              />
-            ) : (
-              <Text className="mb-sm text-center text-2xl font-extrabold text-white">
-                {title}
-              </Text>
-            )}
+            <Text className="mb-sm text-center text-3xl font-bold text-white capitalize">
+              {title}
+            </Text>
 
             {showNewBadge ? (
               <Text className="mb-sm text-sm font-semibold text-[#4DB8FF]">
@@ -192,6 +174,8 @@ export default function MovieDetailScreen() {
                 isLoading={similarLoading}
               />
             </View>
+          ) : null}
+            </>
           ) : null}
         </ScrollView>
       </SafeAreaView>
