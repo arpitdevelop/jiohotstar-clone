@@ -3,6 +3,7 @@ import { Endpoints } from '@/api/endpoints';
 import { Movie, MovieDetail } from '@/types/movie';
 import { PaginatedResponse } from '@/types/api';
 import moviesMock from '@/mocks/movies.json';
+import tvMock from '@/mocks/tv.json';
 
 // Helper to check if TMDB token is present
 const hasToken = () => !!process.env.EXPO_PUBLIC_TMDB_TOKEN;
