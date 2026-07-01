@@ -70,7 +70,7 @@ export function FeaturedCarousel({ movies }: FeaturedCarouselProps) {
               >
                 <AppImage
                   source={{ uri: getBackdropUrl(item.backdrop_path, "w1280") }}
-                  className="h-full w-full"
+                  className="h-full w-full bg-card"
                 />
                 <View className="absolute inset-0 bg-black/20" />
                 <View

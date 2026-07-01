@@ -8,7 +8,14 @@ import { HomeCategory } from "@/types/home";
 import { BottomSheet, RNHostView } from "@expo/ui";
 import { Ionicons } from "@expo/vector-icons";
 import { isGlassEffectAPIAvailable } from "expo-glass-effect";
-import { Dimensions, Platform, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 const HORIZONTAL_PADDING = 16;
 const TILE_GAP = 8;
@@ -69,7 +76,8 @@ function BrowseSectionList({
   section: BrowseSection;
   onDismiss: () => void;
 }) {
-  const { category, setCategory, language, setLanguage } = useHomeCategoryStore();
+  const { category, setCategory, language, setLanguage } =
+    useHomeCategoryStore();
 
   return (
     <View className="mb-6">
@@ -125,7 +133,11 @@ function CategoryBrowseSheetAndroid({
   isPresented,
   onDismiss,
 }: CategoryBrowseSheetProps) {
-  const { ModalBottomSheet, Column, Host } = require("@expo/ui/jetpack-compose");
+  const {
+    ModalBottomSheet,
+    Column,
+    Host,
+  } = require("@expo/ui/jetpack-compose");
   const { padding } = require("@expo/ui/jetpack-compose/modifiers");
   const React = require("react");
 
@@ -169,11 +181,11 @@ function CategoryBrowseSheetAndroid({
             <ScrollView
               nestedScrollEnabled
               showsVerticalScrollIndicator={false}
-              style={{
-                backgroundColor: "#09101a",
-                experimental_backgroundImage:
-                  "linear-gradient(to right, rgba(42, 132, 255, 0.2), rgba(255, 0, 140, 0.15))",
-              }}
+              style={
+                {
+                  // backgroundColor: "#09101a",
+                }
+              }
               contentContainerStyle={{
                 paddingBottom: 32,
               }}
@@ -202,9 +214,7 @@ function CategoryBrowseSheetGeneric({
   const sheetBackgroundStyle = useGlass
     ? {}
     : {
-        backgroundColor: "#09101a",
-        experimental_backgroundImage:
-          "linear-gradient(to right, rgba(42, 132, 255, 0.2), rgba(255, 0, 140, 0.15))",
+        // backgroundColor: "#09101a",
       };
 
   return (

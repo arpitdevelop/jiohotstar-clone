@@ -1,6 +1,5 @@
 import { CategoryPillBar } from "@/components/home/CategoryPillBar";
 import { ForYouHeader } from "@/components/home/ForYouHeader";
-import { HomeTopButtons } from "@/components/home/HomeTopButtons";
 import { ScreenBackground } from "@/components/home/ScreenBackground";
 import { FeaturedCarousel } from "@/components/sections/FeaturedCarousel";
 import { MovieRow } from "@/components/sections/MovieRow";
@@ -62,7 +61,7 @@ export default function HomeScreen() {
       <ScreenBackground />
       <StatusBar style="light" />
       <SafeAreaView className="flex-1" edges={["top"]}>
-        <HomeTopButtons />
+        {/* <HomeTopButtons /> */}
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="flex-1"
@@ -79,7 +78,7 @@ export default function HomeScreen() {
           ) : (
             <View>
               {trending.data && (
-                <FeaturedCarousel movies={trending.data.slice(0, 5)} />
+                <FeaturedCarousel movies={trending.data.slice(0, 10)} />
               )}
 
               <MovieRow

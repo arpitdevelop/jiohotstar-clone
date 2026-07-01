@@ -1,7 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export function ForYouHeader() {
   const router = useRouter();
@@ -13,15 +11,15 @@ export function ForYouHeader() {
       <View className="flex-row items-center gap-md">
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => router.push('/profile')}
+          onPress={() => router.push("/profile")}
           className="rounded-full border border-premium/60 px-3 py-1"
         >
           <Text className="text-xs font-semibold text-premium">Subscribe</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity activeOpacity={0.8}>
+        {/* <TouchableOpacity activeOpacity={0.8}>
           <Ionicons name="tv-outline" size={22} color="#FFFFFF" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

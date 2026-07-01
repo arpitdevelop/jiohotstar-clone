@@ -8,16 +8,13 @@
     "scheme": "jiohotstarclone",
     "userInterfaceStyle": "dark",
     "ios": {
-      "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.jiohotstarclone.app"
     },
     "android": {
       "package": "com.jiohotstarclone.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#6B2D8B",
+        "foregroundImage": "./assets/images/icon.png"
       },
       "predictiveBackGestureEnabled": false
     },
@@ -31,7 +28,7 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#201240",
           "android": {
             "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
@@ -42,6 +39,12 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7e5a5e77-b53d-4761-b15e-e1b89ace3709"
+      }
     }
   }
 }
