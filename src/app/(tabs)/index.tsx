@@ -26,19 +26,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const category = useHomeCategoryStore((state) => state.category);
+  const language = useHomeCategoryStore((state) => state.language);
   const isMovies = category === "Movies";
 
   const { data: profile } = useProfileDetails();
 
-  const movieTrending = useTrendingMovies();
-  const moviePopular = usePopularMovies();
-  const movieTopRated = useTopRatedMovies();
-  const movieUpcoming = useUpcomingMovies();
+  const movieTrending = useTrendingMovies(language);
+  const moviePopular = usePopularMovies(language);
+  const movieTopRated = useTopRatedMovies(language);
+  const movieUpcoming = useUpcomingMovies(language);
 
-  const tvTrending = useTrendingTv();
-  const tvPopular = usePopularTv();
-  const tvTopRated = useTopRatedTv();
-  const tvOnTheAir = useOnTheAirTv();
+  const tvTrending = useTrendingTv(language);
+  const tvPopular = usePopularTv(language);
+  const tvTopRated = useTopRatedTv(language);
+  const tvOnTheAir = useOnTheAirTv(language);
 
   const trending = isMovies ? movieTrending : tvTrending;
   const popular = isMovies ? moviePopular : tvPopular;
@@ -65,7 +66,7 @@ export default function HomeScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="flex-1"
-          contentContainerClassName="pb-[120px]"
+          contentContainerClassName="pb-[180px]"
         >
           <ForYouHeader />
 

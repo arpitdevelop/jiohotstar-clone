@@ -9,6 +9,8 @@ export function buildMovieDetailRoute(movie: Movie, kind: SharedImageKind) {
       id: String(movie.id),
       type: movie.media_type ?? "movie",
       sharedImageKind: kind,
+      backdropPath: movie.backdrop_path ?? undefined,
+      posterPath: movie.poster_path ?? undefined,
     },
   };
 }

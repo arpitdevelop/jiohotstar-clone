@@ -36,7 +36,7 @@ export default function ProfileScreen() {
         ) : (
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerClassName="pb-[120px]"
+            contentContainerClassName="pb-[140px]"
           >
             <SubscribeBanner mobileNo={profile.mobileNo} />
             <ProfileAvatarsRow profiles={profile.profiles} />

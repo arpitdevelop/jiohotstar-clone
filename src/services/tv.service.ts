@@ -6,6 +6,7 @@ import { Movie, MovieDetail, CastMember } from "@/types/movie";
 
 const hasToken = () => !!process.env.EXPO_PUBLIC_TMDB_TOKEN;
 
+// Map mock movies to MovieDetail format if needed
 const getMockDetails = (id: number): MovieDetail => {
   const mock = tvMock.find((show) => show.id === id) || tvMock[0];
   return {
@@ -20,48 +21,75 @@ const getMockDetails = (id: number): MovieDetail => {
   };
 };
 
+const getMockTvForLanguage = (language?: string): Movie[] => {
+  if (!language) return tvMock as Movie[];
+  const languageNames: Record<string, string> = {
+    hi: "Hindi",
+    en: "English",
+    ta: "Tamil",
+    te: "Telugu",
+    ml: "Malayalam",
+    kn: "Kannada",
+  };
+  const name = languageNames[language] || language;
+  return tvMock.map((show) => ({
+    ...show,
+    name: `${show.name} (${name})`,
+    original_language: language,
+    media_type: "tv" as const,
+  }));
+};
+
 export const TvService = {
-  getTrendingTv: async (): Promise<Movie[]> => {
-    if (!hasToken()) return tvMock as Movie[];
+  getTrendingTv: async (language?: string): Promise<Movie[]> => {
+    if (!hasToken()) return getMockTvForLanguage(language);
     try {
-      const response = await api.get<PaginatedResponse<Movie>>(Endpoints.trendingTv);
+      const response = language
+        ? await api.get<PaginatedResponse<Movie>>('/discover/tv', { params: { with_original_language: language, sort_by: 'popularity.desc' } })
+        : await api.get<PaginatedResponse<Movie>>(Endpoints.trendingTv);
       return response.data.results.map((show) => ({ ...show, media_type: "tv" }));
     } catch (e) {
       console.warn("Failed to fetch trending TV, using mock data:", e);
-      return tvMock as Movie[];
+      return getMockTvForLanguage(language);
     }
   },
 
-  getPopularTv: async (): Promise<Movie[]> => {
-    if (!hasToken()) return tvMock as Movie[];
+  getPopularTv: async (language?: string): Promise<Movie[]> => {
+    if (!hasToken()) return getMockTvForLanguage(language);
     try {
-      const response = await api.get<PaginatedResponse<Movie>>(Endpoints.popularTv);
+      const response = language
+        ? await api.get<PaginatedResponse<Movie>>('/discover/tv', { params: { with_original_language: language, sort_by: 'popularity.desc' } })
+        : await api.get<PaginatedResponse<Movie>>(Endpoints.popularTv);
       return response.data.results.map((show) => ({ ...show, media_type: "tv" }));
     } catch (e) {
       console.warn("Failed to fetch popular TV, using mock data:", e);
-      return tvMock as Movie[];
+      return getMockTvForLanguage(language);
     }
   },
 
-  getTopRatedTv: async (): Promise<Movie[]> => {
-    if (!hasToken()) return [...tvMock].reverse() as Movie[];
+  getTopRatedTv: async (language?: string): Promise<Movie[]> => {
+    if (!hasToken()) return [...getMockTvForLanguage(language)].reverse() as Movie[];
     try {
-      const response = await api.get<PaginatedResponse<Movie>>(Endpoints.topRatedTv);
+      const response = language
+        ? await api.get<PaginatedResponse<Movie>>('/discover/tv', { params: { with_original_language: language, sort_by: 'vote_average.desc', 'vote_count.gte': 50 } })
+        : await api.get<PaginatedResponse<Movie>>(Endpoints.topRatedTv);
       return response.data.results.map((show) => ({ ...show, media_type: "tv" }));
     } catch (e) {
       console.warn("Failed to fetch top rated TV, using mock data:", e);
-      return [...tvMock].reverse() as Movie[];
+      return [...getMockTvForLanguage(language)].reverse() as Movie[];
     }
   },
 
-  getOnTheAirTv: async (): Promise<Movie[]> => {
-    if (!hasToken()) return tvMock.slice(1, 4) as Movie[];
+  getOnTheAirTv: async (language?: string): Promise<Movie[]> => {
+    if (!hasToken()) return getMockTvForLanguage(language).slice(1, 4) as Movie[];
     try {
-      const response = await api.get<PaginatedResponse<Movie>>(Endpoints.onTheAirTv);
+      const response = language
+        ? await api.get<PaginatedResponse<Movie>>('/discover/tv', { params: { with_original_language: language, sort_by: 'first_air_date.desc' } })
+        : await api.get<PaginatedResponse<Movie>>(Endpoints.onTheAirTv);
       return response.data.results.map((show) => ({ ...show, media_type: "tv" }));
     } catch (e) {
       console.warn("Failed to fetch on the air TV, using mock data:", e);
-      return tvMock.slice(1, 4) as Movie[];
+      return getMockTvForLanguage(language).slice(1, 4) as Movie[];
     }
   },
 
@@ -94,6 +122,45 @@ export const TvService = {
     } catch (e) {
       console.warn(`Failed to fetch similar TV for ${id}, using mock data:`, e);
       return tvMock.filter((show) => show.id !== id) as Movie[];
+    }
+  },
+
+  discoverTvByGenre: async (genreId: number): Promise<Movie[]> => {
+    if (!hasToken()) {
+      return tvMock.filter((show) =>
+        show.genres?.some((g) => g.id === genreId)
+      ) as Movie[];
+    }
+    try {
+      const response = await api.get<PaginatedResponse<Movie>>('/discover/tv', {
+        params: { with_genres: genreId, sort_by: 'popularity.desc' },
+      });
+      return response.data.results.map((show) => ({ ...show, media_type: 'tv' }));
+    } catch (e) {
+      console.warn(`Failed to discover TV for genre ${genreId}:`, e);
+      return tvMock.filter((show) =>
+        show.genres?.some((g) => g.id === genreId)
+      ) as Movie[];
+    }
+  },
+
+  searchTvOnly: async (query: string): Promise<Movie[]> => {
+    if (!query.trim()) return [];
+    if (!hasToken()) {
+      return tvMock.filter((show) =>
+        show.name.toLowerCase().includes(query.toLowerCase())
+      ).map(show => ({ ...show, title: show.name, media_type: "tv" as const })) as unknown as Movie[];
+    }
+    try {
+      const response = await api.get<PaginatedResponse<Movie>>('/search/tv', {
+        params: { query },
+      });
+      return response.data.results.map((show) => ({ ...show, media_type: 'tv' }));
+    } catch (e) {
+      console.warn(`Failed to search TV for "${query}":`, e);
+      return tvMock.filter((show) =>
+        show.name.toLowerCase().includes(query.toLowerCase())
+      ).map(show => ({ ...show, title: show.name, media_type: "tv" as const })) as unknown as Movie[];
     }
   },
 };

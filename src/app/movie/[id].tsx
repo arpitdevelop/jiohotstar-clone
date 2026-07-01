@@ -19,10 +19,18 @@ import { ScrollView, Share, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function MovieDetailScreen() {
-  const { id, type, sharedImageKind } = useLocalSearchParams<{
+  const {
+    id,
+    type,
+    sharedImageKind,
+    backdropPath: initialBackdropPath,
+    posterPath: initialPosterPath,
+  } = useLocalSearchParams<{
     id: string;
     type?: string;
     sharedImageKind?: SharedImageKind;
+    backdropPath?: string;
+    posterPath?: string;
   }>();
   const movieId = Number(id);
   const mediaType = type === "tv" ? "tv" : "movie";
@@ -95,8 +103,8 @@ export default function MovieDetailScreen() {
           <MediaTrailerHero
             mediaId={movieId}
             mediaType={mediaType}
-            backdropPath={movie?.backdrop_path ?? null}
-            posterPath={movie?.poster_path ?? null}
+            backdropPath={movie?.backdrop_path ?? initialBackdropPath ?? null}
+            posterPath={movie?.poster_path ?? initialPosterPath ?? null}
             imageKind={imageKind}
             onClose={() => router.back()}
           />

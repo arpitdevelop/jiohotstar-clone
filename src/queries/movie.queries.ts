@@ -2,34 +2,34 @@ import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from './queryKeys';
 import { MovieService } from '@/services/movie.service';
 
-export const useTrendingMovies = () => {
+export const useTrendingMovies = (language?: string) => {
   return useQuery({
-    queryKey: queryKeys.movies.trending(),
-    queryFn: () => MovieService.getTrendingMovies(),
+    queryKey: queryKeys.movies.trending(language),
+    queryFn: () => MovieService.getTrendingMovies(language),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
-export const usePopularMovies = () => {
+export const usePopularMovies = (language?: string) => {
   return useQuery({
-    queryKey: queryKeys.movies.popular(),
-    queryFn: () => MovieService.getPopularMovies(),
+    queryKey: queryKeys.movies.popular(language),
+    queryFn: () => MovieService.getPopularMovies(language),
     staleTime: 5 * 60 * 1000,
   });
 };
 
-export const useTopRatedMovies = () => {
+export const useTopRatedMovies = (language?: string) => {
   return useQuery({
-    queryKey: queryKeys.movies.topRated(),
-    queryFn: () => MovieService.getTopRatedMovies(),
+    queryKey: queryKeys.movies.topRated(language),
+    queryFn: () => MovieService.getTopRatedMovies(language),
     staleTime: 5 * 60 * 1000,
   });
 };
 
-export const useUpcomingMovies = () => {
+export const useUpcomingMovies = (language?: string) => {
   return useQuery({
-    queryKey: queryKeys.movies.upcoming(),
-    queryFn: () => MovieService.getUpcomingMovies(),
+    queryKey: queryKeys.movies.upcoming(language),
+    queryFn: () => MovieService.getUpcomingMovies(language),
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -58,5 +58,23 @@ export const useSearchMovies = (query: string) => {
     queryFn: () => MovieService.searchMovies(query),
     staleTime: 1 * 60 * 1000, // 1 minute
     enabled: query.trim().length > 0,
+  });
+};
+
+export const useDiscoverMoviesByGenre = (genreId: number, enabled = true) => {
+  return useQuery({
+    queryKey: [...queryKeys.movies.all, "discover", genreId],
+    queryFn: () => MovieService.discoverMoviesByGenre(genreId),
+    staleTime: 5 * 60 * 1000,
+    enabled,
+  });
+};
+
+export const useSearchMoviesOnly = (query: string, enabled = true) => {
+  return useQuery({
+    queryKey: [...queryKeys.movies.all, "searchOnly", query],
+    queryFn: () => MovieService.searchMoviesOnly(query),
+    staleTime: 1 * 60 * 1000,
+    enabled: enabled && query.trim().length > 0,
   });
 };

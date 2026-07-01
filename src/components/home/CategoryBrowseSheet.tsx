@@ -3,10 +3,12 @@ import {
   BrowseSection,
   BrowseTile,
 } from "@/constants/browse-categories";
+import { useHomeCategoryStore } from "@/store/home-category.store";
 import { HomeCategory } from "@/types/home";
 import { BottomSheet, RNHostView } from "@expo/ui";
 import { Ionicons } from "@expo/vector-icons";
-import { Dimensions, Pressable, ScrollView, Text, View } from "react-native";
+import { isGlassEffectAPIAvailable } from "expo-glass-effect";
+import { Dimensions, Platform, Pressable, ScrollView, Text, View } from "react-native";
 
 const HORIZONTAL_PADDING = 16;
 const TILE_GAP = 8;
@@ -16,9 +18,7 @@ const tileWidth = (screenWidth - HORIZONTAL_PADDING * 2 - TILE_GAP * 2) / 3;
 
 interface CategoryBrowseSheetProps {
   isPresented: boolean;
-  selectedCategory: HomeCategory;
   onDismiss: () => void;
-  onSelectCategory: (category: HomeCategory) => void;
 }
 
 function CategoryTile({
@@ -62,82 +62,186 @@ function CategoryTile({
   );
 }
 
-function BrowseSectionGrid({
+function BrowseSectionList({
   section,
-  selectedCategory,
-  onSelectCategory,
+  onDismiss,
 }: {
   section: BrowseSection;
-  selectedCategory: HomeCategory;
-  onSelectCategory: (category: HomeCategory) => void;
+  onDismiss: () => void;
 }) {
+  const { category, setCategory, language, setLanguage } = useHomeCategoryStore();
+
   return (
     <View className="mb-6">
-      <Text className="mb-3 text-base font-bold text-white">
+      <Text
+        className="mb-3 text-base font-bold text-white"
+        style={{ paddingHorizontal: HORIZONTAL_PADDING }}
+      >
         {section.title}
       </Text>
-      <View className="flex-row flex-wrap" style={{ gap: TILE_GAP }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingHorizontal: HORIZONTAL_PADDING,
+          gap: TILE_GAP,
+        }}
+      >
         {section.items.map((tile) => {
           const isHomeCategory = section.selectable === "homeCategory";
-          const isSelected =
-            isHomeCategory && selectedCategory === (tile.id as HomeCategory);
+          const isSelected = isHomeCategory
+            ? category === tile.id
+            : language === tile.id;
+
+          const handlePress = () => {
+            if (isHomeCategory) {
+              setCategory(tile.id as HomeCategory);
+            } else {
+              // Toggle selection: if already selected, clear it
+              if (language === tile.id) {
+                setLanguage(undefined);
+              } else {
+                setLanguage(tile.id);
+              }
+            }
+            onDismiss();
+          };
 
           return (
             <CategoryTile
               key={tile.id}
               tile={tile}
               isSelected={isSelected}
-              onPress={
-                isHomeCategory
-                  ? () => onSelectCategory(tile.id as HomeCategory)
-                  : undefined
-              }
+              onPress={handlePress}
             />
           );
         })}
-      </View>
+      </ScrollView>
     </View>
   );
 }
 
-export function CategoryBrowseSheet({
+function CategoryBrowseSheetAndroid({
   isPresented,
-  selectedCategory,
   onDismiss,
-  onSelectCategory,
 }: CategoryBrowseSheetProps) {
-  const handleSelectCategory = (category: HomeCategory) => {
-    onSelectCategory(category);
-    onDismiss();
-  };
+  const { ModalBottomSheet, Column, Host } = require("@expo/ui/jetpack-compose");
+  const { padding } = require("@expo/ui/jetpack-compose/modifiers");
+  const React = require("react");
+
+  const sheetRef = React.useRef(null);
+  const [mount, setMount] = React.useState(isPresented);
+
+  React.useEffect(() => {
+    if (isPresented) {
+      setMount(true);
+      return;
+    }
+    let cancelled = false;
+    sheetRef.current?.hide().then(() => {
+      if (!cancelled) setMount(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isPresented]);
+
+  if (!mount) return null;
+
+  const contentModifiers = [padding(16, 0, 16, 0)];
 
   return (
-    // <Host matchContents style={{ position: "absolute", width: 0, height: 0 }}>
+    <Host style={{ position: "absolute" }} pointerEvents="none">
+      <ModalBottomSheet
+        ref={sheetRef}
+        onDismissRequest={onDismiss}
+        showDragHandle={true}
+        skipPartiallyExpanded={false}
+        containerColor="#09101a"
+        scrimColor="rgba(0, 0, 0, 0.5)"
+      >
+        <Column modifiers={contentModifiers}>
+          <RNHostView
+            style={{
+              backgroundColor: "#09101a",
+            }}
+          >
+            <ScrollView
+              nestedScrollEnabled
+              showsVerticalScrollIndicator={false}
+              style={{
+                backgroundColor: "#09101a",
+                experimental_backgroundImage:
+                  "linear-gradient(to right, rgba(42, 132, 255, 0.2), rgba(255, 0, 140, 0.15))",
+              }}
+              contentContainerStyle={{
+                paddingBottom: 32,
+              }}
+            >
+              {BROWSE_SECTIONS.map((section: BrowseSection) => (
+                <BrowseSectionList
+                  key={section.title}
+                  section={section}
+                  onDismiss={onDismiss}
+                />
+              ))}
+            </ScrollView>
+          </RNHostView>
+        </Column>
+      </ModalBottomSheet>
+    </Host>
+  );
+}
+
+function CategoryBrowseSheetGeneric({
+  isPresented,
+  onDismiss,
+}: CategoryBrowseSheetProps) {
+  const useGlass = Platform.OS === "ios" && isGlassEffectAPIAvailable();
+
+  const sheetBackgroundStyle = useGlass
+    ? {}
+    : {
+        backgroundColor: "#09101a",
+        experimental_backgroundImage:
+          "linear-gradient(to right, rgba(42, 132, 255, 0.2), rgba(255, 0, 140, 0.15))",
+      };
+
+  return (
     <BottomSheet
       isPresented={isPresented}
       onDismiss={onDismiss}
       snapPoints={["half"]}
     >
-      <RNHostView>
+      <RNHostView
+        style={{
+          backgroundColor: useGlass ? "transparent" : "#09101a",
+        }}
+      >
         <ScrollView
           nestedScrollEnabled
           showsVerticalScrollIndicator={false}
+          style={sheetBackgroundStyle}
           contentContainerStyle={{
-            paddingHorizontal: HORIZONTAL_PADDING,
             paddingBottom: 32,
           }}
         >
           {BROWSE_SECTIONS.map((section) => (
-            <BrowseSectionGrid
+            <BrowseSectionList
               key={section.title}
               section={section}
-              selectedCategory={selectedCategory}
-              onSelectCategory={handleSelectCategory}
+              onDismiss={onDismiss}
             />
           ))}
         </ScrollView>
       </RNHostView>
     </BottomSheet>
-    // </Host>
   );
+}
+
+export function CategoryBrowseSheet(props: CategoryBrowseSheetProps) {
+  if (Platform.OS === "android") {
+    return <CategoryBrowseSheetAndroid {...props} />;
+  }
+  return <CategoryBrowseSheetGeneric {...props} />;
 }

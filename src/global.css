@@ -4,20 +4,17 @@
 
 @layer base {
   :root {
-    --color-background: 249 250 251;
-    --color-card: 255 255 255;
-    --color-text: 15 23 42;
-    --color-text-secondary: 100 116 139;
-    --color-border: 226 232 240;
+    --color-background: 9 16 26;
+    --color-card: 19 28 46;
+    --color-text: 255 255 255;
+    --color-text-secondary: 143 152 166;
+    --color-border: 31 44 63;
   }
+}
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --color-background: 9 16 26;
-      --color-card: 19 28 46;
-      --color-text: 255 255 255;
-      --color-text-secondary: 143 152 166;
-      --color-border: 31 44 63;
-    }
-  }
+/* Custom bottom sheet background override for web on non-glass eligible devices */
+[data-vaul-drawer] {
+  background-color: #09101a !important;
+  background-image: linear-gradient(to right, rgba(42, 132, 255, 0.2), rgba(255, 0, 140, 0.15)) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
