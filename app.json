@@ -35,7 +35,52 @@
           }
         }
       ],
-      "expo-image"
+      "expo-image",
+      [
+        "expo-alternate-app-icons",
+        [
+          {
+            "name": "DarkIcon",
+            "ios": "./assets/app-icons/dark-icon.png",
+            "android": {
+              "foregroundImage": "./assets/app-icons/dark-icon.png",
+              "backgroundColor": "#0A0F17"
+            }
+          },
+          {
+            "name": "DiwaliIcon",
+            "ios": "./assets/app-icons/diwali-icon.png",
+            "android": {
+              "foregroundImage": "./assets/app-icons/diwali-icon.png",
+              "backgroundColor": "#201240"
+            }
+          },
+          {
+            "name": "GoldIcon",
+            "ios": "./assets/app-icons/gold-icon.png",
+            "android": {
+              "foregroundImage": "./assets/app-icons/gold-icon.png",
+              "backgroundColor": "#120A24"
+            }
+          },
+          {
+            "name": "HoliIcon",
+            "ios": "./assets/app-icons/holi-icon.png",
+            "android": {
+              "foregroundImage": "./assets/app-icons/holi-icon.png",
+              "backgroundColor": "#170C30"
+            }
+          },
+          {
+            "name": "OriginalIcon",
+            "ios": "./assets/app-icons/original-icon.png",
+            "android": {
+              "foregroundImage": "./assets/app-icons/original-icon.png",
+              "backgroundColor": "#6B2D8B"
+            }
+          }
+        ]
+      ]
     ],
     "experiments": {
       "typedRoutes": true
