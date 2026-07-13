@@ -141,9 +141,15 @@ export default function MovieDetailScreen() {
             activeOpacity={0.85}
             className="mx-lg mt-lg flex-row items-center justify-center gap-2 rounded-full py-3.5"
             style={{ backgroundColor: "#D4DCE6" }}
-            onPress={() =>
-              alert(isTv ? "Playing latest episode..." : "Playing movie...")
-            }
+            onPress={() => {
+              router.push({
+                pathname: "/watch/[id]",
+                params: {
+                  id: String(movieId),
+                  type: mediaType,
+                },
+              });
+            }}
           >
             <Ionicons name="play" size={18} color="#000000" />
             <Text className="text-[15px] font-bold text-black">

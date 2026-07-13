@@ -3,7 +3,7 @@
     "name": "jiohotstar-clone",
     "slug": "jiohotstar-clone",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "jiohotstarclone",
     "userInterfaceStyle": "dark",
@@ -80,7 +80,8 @@
             }
           }
         ]
-      ]
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true
