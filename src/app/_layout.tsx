@@ -7,6 +7,12 @@ import { Stack, useNavigationContainerRef } from "expo-router";
 import * as Sentry from "@sentry/react-native";
 import Constants, { ExecutionEnvironment } from "expo-constants";
 import { useEffect } from "react";
+import { configureReanimatedLogger } from "react-native-reanimated";
+
+// Disable Reanimated strict mode warnings (often triggered by third-party packages like react-native-reanimated-carousel during render)
+configureReanimatedLogger({
+  strict: false,
+});
 
 const isRunningInExpoGo =
   Constants.executionEnvironment === ExecutionEnvironment.StoreClient;

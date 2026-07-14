@@ -45,6 +45,7 @@ export default function WatchScreen() {
   const [settingsSheetVisible, setSettingsSheetVisible] = useState(false);
   const [availableQualities, setAvailableQualities] = useState<HlsStream[]>([]);
   const [selectedQualityId, setSelectedQualityId] = useState<string>("auto");
+  const [activeUrl, setActiveUrl] = useState<string>(HLS_SOURCE_URI);
   const pendingSeekTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -71,7 +72,8 @@ export default function WatchScreen() {
     if (targetUrl) {
       try {
         pendingSeekTimeRef.current = player.currentTime;
-        player.replace({ uri: targetUrl });
+        setActiveUrl(targetUrl);
+        await player.replaceAsync({ uri: targetUrl });
       } catch (err) {
         console.error("Failed to switch video quality:", err);
       }
@@ -385,6 +387,7 @@ export default function WatchScreen() {
         <TouchableWithoutFeedback onPress={handlePlayerTap}>
           <View className="absolute inset-0">
             <VideoView
+              key={activeUrl}
               ref={videoViewRef}
               player={player}
               nativeControls={false}
