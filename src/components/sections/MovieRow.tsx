@@ -8,16 +8,24 @@ interface MovieRowProps {
   title: string;
   movies?: Movie[];
   isLoading?: boolean;
+  type?: 'poster' | 'landscape' | 'continueWatching';
 }
 
-export function MovieRow({ title, movies = [], isLoading = false }: MovieRowProps) {
+export const MovieRow = React.memo(function MovieRow({
+  title,
+  movies = [],
+  isLoading = false,
+  type = 'poster'
+}: MovieRowProps) {
   if (isLoading) {
-    return <MovieRowSkeleton />;
+    return <MovieRowSkeleton type={type === 'landscape' ? 'landscape' : 'poster'} />;
   }
 
   if (movies.length === 0) {
     return null;
   }
+
+  const isLandscape = type === 'landscape';
 
   return (
     <View className="my-sm">
@@ -26,13 +34,18 @@ export function MovieRow({ title, movies = [], isLoading = false }: MovieRowProp
       </Text>
       <FlatList
         data={movies}
-        renderItem={({ item }) => <MovieCard movie={item} />}
+        renderItem={({ item }) => (
+          <MovieCard movie={item} type={isLandscape ? 'landscape' : 'poster'} />
+        )}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerClassName="px-lg pb-xs"
         keyExtractor={(item) => item.id.toString()}
         ItemSeparatorComponent={() => <View className="w-md" />}
+        windowSize={3}
+        initialNumToRender={5}
+        maxToRenderPerBatch={5}
       />
     </View>
   );
-}
+});

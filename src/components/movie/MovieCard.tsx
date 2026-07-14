@@ -1,7 +1,7 @@
 import { AppImage } from "@/components/common/AppImage";
 import { Movie } from "@/types/movie";
 import { buildMovieDetailRoute } from "@/utils/movie-navigation";
-import { getPosterUrl } from "@/utils/image";
+import { getPosterUrl, getBackdropUrl } from "@/utils/image";
 import { useTheme } from "@/hooks/useTheme";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
@@ -9,24 +9,35 @@ import { Pressable, Text, View } from "react-native";
 
 interface MovieCardProps {
   movie: Movie;
+  type?: 'poster' | 'landscape';
   width?: number;
   height?: number;
 }
 
-export function MovieCard({ movie, width = 110, height = 165 }: MovieCardProps) {
+export function MovieCard({ movie, type = 'poster', width, height }: MovieCardProps) {
   const { colors } = useTheme();
   const isPremium = movie.vote_average >= 8.0;
+  const isLandscape = type === 'landscape';
+
+  const defaultWidth = isLandscape ? 200 : 110;
+  const defaultHeight = isLandscape ? 112 : 165;
+  const finalWidth = width ?? defaultWidth;
+  const finalHeight = height ?? defaultHeight;
+
+  const imageUri = isLandscape
+    ? getBackdropUrl(movie.backdrop_path, "w780")
+    : getPosterUrl(movie.poster_path, "w342");
 
   return (
-    <Link href={buildMovieDetailRoute(movie, "poster")} asChild>
+    <Link href={buildMovieDetailRoute(movie, isLandscape ? "backdrop" : "poster")} asChild>
       <Pressable
         className="relative overflow-hidden rounded-lg shadow-md"
-        style={{ width, height }}
+        style={{ width: finalWidth, height: finalHeight }}
       >
         <Link.AppleZoom>
           <View className="h-full w-full overflow-hidden rounded-lg">
             <AppImage
-              source={{ uri: getPosterUrl(movie.poster_path, "w342") }}
+              source={{ uri: imageUri }}
               className="h-full w-full bg-card"
             />
           </View>

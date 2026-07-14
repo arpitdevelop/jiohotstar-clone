@@ -1,8 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, Animated } from 'react-native';
 
-export function MovieRowSkeleton() {
-  const pulseAnim = useRef(new Animated.Value(0.3)).current;
+interface MovieRowSkeletonProps {
+  type?: 'poster' | 'landscape';
+}
+
+export function MovieRowSkeleton({ type = 'poster' }: MovieRowSkeletonProps) {
+  const pulseAnim = useMemo(() => new Animated.Value(0.3), []);
 
   useEffect(() => {
     Animated.loop(
@@ -22,6 +26,9 @@ export function MovieRowSkeleton() {
   }, [pulseAnim]);
 
   const items = Array.from({ length: 4 });
+  const isLandscape = type === 'landscape';
+  const width = isLandscape ? 200 : 110;
+  const height = isLandscape ? 112 : 165;
 
   return (
     <View className="my-md px-lg">
@@ -33,8 +40,12 @@ export function MovieRowSkeleton() {
         {items.map((_, index) => (
           <Animated.View
             key={index}
-            className="h-[165px] w-[110px] rounded-lg bg-card"
-            style={{ opacity: pulseAnim }}
+            className="rounded-lg bg-card"
+            style={{
+              opacity: pulseAnim,
+              width,
+              height,
+            }}
           />
         ))}
       </View>
