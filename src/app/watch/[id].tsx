@@ -25,6 +25,8 @@ import { useMovieDetails, useSimilarMovies } from "@/queries/movie.queries";
 import { useSimilarTv, useTvDetails } from "@/queries/tv.queries";
 import { getReleaseYear } from "@/utils/date";
 import { getContentRating, getLanguageName } from "@/utils/language";
+import { parseHlsPlaylist, HlsStream } from "@/utils/hlsParser";
+
 
 const HLS_SOURCE_URI =
   "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8";
@@ -40,6 +42,40 @@ export default function WatchScreen() {
   const [isRated, setIsRated] = useState(false);
   const [isCustomFullscreen, setIsCustomFullscreen] = useState(false);
   const [settingsSheetVisible, setSettingsSheetVisible] = useState(false);
+  const [availableQualities, setAvailableQualities] = useState<HlsStream[]>([]);
+  const [selectedQualityId, setSelectedQualityId] = useState<string>("auto");
+  const pendingSeekTimeRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    fetch(HLS_SOURCE_URI)
+      .then((res) => res.text())
+      .then((text) => {
+        if (active) {
+          const parsed = parseHlsPlaylist(text, HLS_SOURCE_URI);
+          setAvailableQualities(parsed);
+        }
+      })
+      .catch((err) => {
+        console.error("Failed to fetch and parse master HLS playlist:", err);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const handleSelectQuality = async (opt: any) => {
+    setSelectedQualityId(opt.id);
+    const targetUrl = opt.id === "auto" ? HLS_SOURCE_URI : opt.url;
+    if (targetUrl) {
+      try {
+        pendingSeekTimeRef.current = player.currentTime;
+        player.replace({ uri: targetUrl });
+      } catch (err) {
+        console.error("Failed to switch video quality:", err);
+      }
+    }
+  };
 
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
@@ -79,8 +115,14 @@ export default function WatchScreen() {
     }
   });
 
-  useEventListener(player, "statusChange", () => {
+  useEventListener(player, "statusChange", (evt: any) => {
     setDuration(player.duration);
+    if (evt?.status === "readyToPlay" && pendingSeekTimeRef.current !== null) {
+      const seekTime = pendingSeekTimeRef.current;
+      pendingSeekTimeRef.current = null;
+      player.currentTime = seekTime;
+      player.play();
+    }
   });
 
   // Controls Visibility & Auto-Hide Timer
@@ -606,6 +648,9 @@ export default function WatchScreen() {
         isPresented={settingsSheetVisible}
         onDismiss={() => setSettingsSheetVisible(false)}
         player={player}
+        availableQualities={availableQualities}
+        selectedQualityId={selectedQualityId}
+        onSelectQuality={handleSelectQuality}
       />
     </View>
   );

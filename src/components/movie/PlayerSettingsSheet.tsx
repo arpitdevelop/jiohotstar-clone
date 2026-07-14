@@ -16,6 +16,9 @@ interface PlayerSettingsSheetProps {
   isPresented: boolean;
   onDismiss: () => void;
   player: VideoPlayer;
+  availableQualities: Array<{ id: string; label: string; sub?: string; url: string }>;
+  selectedQualityId: string;
+  onSelectQuality: (opt: any) => void;
 }
 
 type TabType = "quality" | "audio" | "subtitles" | "speed";
@@ -31,37 +34,31 @@ export function PlayerSettingsSheet(props: PlayerSettingsSheetProps) {
 function PlayerSettingsContent({
   player,
   onDismiss,
+  availableQualities,
+  selectedQualityId,
+  onSelectQuality,
 }: {
   player: VideoPlayer;
   onDismiss: () => void;
+  availableQualities: Array<{ id: string; label: string; sub?: string; url: string }>;
+  selectedQualityId: string;
+  onSelectQuality: (opt: any) => void;
 }) {
   const [activeTab, setActiveTab] = useState<TabType>("quality");
 
   // Track selection state (fallback to mocks if tracks aren't parsed dynamically yet)
-  const [selectedQualityId, setSelectedQualityId] = useState<string>("auto");
   const [selectedAudioId, setSelectedAudioId] = useState<string>("default");
   const [selectedSubtitleId, setSelectedSubtitleId] = useState<string>("off");
 
   // Quality options mapping
-  const availableQualities = player.availableVideoTracks || [];
   const qualityOptions = [
     { id: "auto", label: "Auto", sub: "Recommended for best experience" },
-    ...availableQualities.map((track) => {
-      const height = track.size.height;
-      let label = `${height}p`;
-      let sub = "";
-      if (height >= 1080) {
-        label = "Full HD";
-        sub = "Up to 1080p";
-      } else if (height >= 720) {
-        label = "HD";
-        sub = "Up to 720p";
-      } else if (height <= 360) {
-        label = "Data Saver";
-        sub = "Up to 360p";
-      }
-      return { id: track.id, label, sub, url: track.url };
-    }),
+    ...availableQualities.map((track) => ({
+      id: track.id,
+      label: track.label,
+      sub: track.sub,
+      url: track.url,
+    })),
   ];
 
   // Audio language options
@@ -108,18 +105,7 @@ function PlayerSettingsContent({
   ];
 
   const handleSelectQuality = async (opt: any) => {
-    setSelectedQualityId(opt.id);
-    if (opt.id === "auto") {
-      // Revert to master playlist or default URL
-      // If we had the master URI stored, we could replace source
-    } else if (opt.url) {
-      // expo-video support for track switching via replace source
-      try {
-        await player.replaceAsync({ uri: opt.url });
-      } catch (err) {
-        console.error("Failed to switch video quality:", err);
-      }
-    }
+    onSelectQuality(opt);
   };
 
   const handleSelectAudio = (opt: any) => {
@@ -292,6 +278,9 @@ function PlayerSettingsSheetGeneric({
   isPresented,
   onDismiss,
   player,
+  availableQualities,
+  selectedQualityId,
+  onSelectQuality,
 }: PlayerSettingsSheetProps) {
   const useGlass = Platform.OS === "ios" && isGlassEffectAPIAvailable();
 
@@ -313,7 +302,13 @@ function PlayerSettingsSheetGeneric({
             paddingBottom: 32,
           }}
         >
-          <PlayerSettingsContent player={player} onDismiss={onDismiss} />
+          <PlayerSettingsContent
+            player={player}
+            onDismiss={onDismiss}
+            availableQualities={availableQualities}
+            selectedQualityId={selectedQualityId}
+            onSelectQuality={onSelectQuality}
+          />
         </ScrollView>
       </RNHostView>
     </BottomSheet>
@@ -325,6 +320,9 @@ function PlayerSettingsSheetAndroid({
   isPresented,
   onDismiss,
   player,
+  availableQualities,
+  selectedQualityId,
+  onSelectQuality,
 }: PlayerSettingsSheetProps) {
   const {
     ModalBottomSheet,
@@ -378,7 +376,13 @@ function PlayerSettingsSheetAndroid({
                 paddingBottom: 32,
               }}
             >
-              <PlayerSettingsContent player={player} onDismiss={onDismiss} />
+              <PlayerSettingsContent
+                player={player}
+                onDismiss={onDismiss}
+                availableQualities={availableQualities}
+                selectedQualityId={selectedQualityId}
+                onSelectQuality={onSelectQuality}
+              />
             </ScrollView>
           </RNHostView>
         </Column>
