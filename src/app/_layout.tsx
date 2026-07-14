@@ -3,9 +3,34 @@ import "../nativewind-setup";
 
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { Stack } from "expo-router";
+import { Stack, useNavigationContainerRef } from "expo-router";
+import * as Sentry from "@sentry/react-native";
+import Constants, { ExecutionEnvironment } from "expo-constants";
+import { useEffect } from "react";
 
-export default function RootLayout() {
+const isRunningInExpoGo =
+  Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+
+const navigationIntegration = Sentry.reactNavigationIntegration({
+  enableTimeToInitialDisplay: !isRunningInExpoGo,
+});
+
+Sentry.init({
+  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN || "https://placeholder-dsn@o0.ingest.sentry.io/0",
+  tracesSampleRate: 1.0,
+  integrations: [navigationIntegration],
+  enableNativeFramesTracking: !isRunningInExpoGo,
+});
+
+function RootLayout() {
+  const ref = useNavigationContainerRef();
+
+  useEffect(() => {
+    if (ref) {
+      navigationIntegration.registerNavigationContainer(ref);
+    }
+  }, [ref]);
+
   return (
     <QueryProvider>
       <ThemeProvider>
@@ -20,3 +45,5 @@ export default function RootLayout() {
     </QueryProvider>
   );
 }
+
+export default Sentry.wrap(RootLayout);

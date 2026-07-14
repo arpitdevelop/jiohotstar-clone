@@ -17,6 +17,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as Sentry from "@sentry/react-native";
 
 interface IconOption {
   id: string | null;
@@ -204,6 +205,98 @@ export default function SettingsScreen() {
                 );
               })}
             </View>
+          </View>
+
+          {/* Sentry Diagnostics Box */}
+          <View className="rounded-2xl border border-white/5 bg-white/5 p-lg">
+            <View className="flex-row items-center gap-sm mb-sm">
+              <Ionicons name="bug-outline" size={20} color="#0078FF" />
+              <Text className="text-lg font-bold text-white">
+                Sentry Diagnostics
+              </Text>
+            </View>
+            <Text className="text-sm text-muted mb-lg">
+              Test and verify Sentry crash reporting integration for both JavaScript and native environments.
+            </Text>
+
+            {/* Diagnostic Information */}
+            <View className="rounded-xl bg-white/5 p-md border border-white/5 gap-sm mb-lg">
+              <View className="flex-row justify-between">
+                <Text className="text-xs text-muted font-semibold uppercase">DSN Status</Text>
+                <Text className={`text-xs font-semibold ${process.env.EXPO_PUBLIC_SENTRY_DSN ? 'text-green-400' : 'text-amber-500'}`}>
+                  {process.env.EXPO_PUBLIC_SENTRY_DSN ? "Configured" : "Using Placeholder"}
+                </Text>
+              </View>
+              <View className="flex-row justify-between border-t border-white/5 pt-sm">
+                <Text className="text-xs text-muted font-semibold uppercase">Environment</Text>
+                <Text className="text-xs font-semibold text-white">
+                  {__DEV__ ? "Development" : "Production"}
+                </Text>
+              </View>
+            </View>
+
+            {/* Test Actions */}
+            <View className="flex-row gap-md justify-between">
+              <Pressable
+                onPress={() => {
+                  Alert.alert(
+                    "Throw JS Exception",
+                    "This will trigger a JavaScript exception immediately to verify JS error reporting.",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Throw",
+                        style: "destructive",
+                        onPress: () => {
+                          throw new Error("Sentry Test JavaScript Error from settings.tsx");
+                        }
+                      }
+                    ]
+                  );
+                }}
+                className="w-[48%] rounded-xl border border-yellow-500/30 bg-yellow-500/10 active:bg-yellow-500/20 p-md items-center"
+              >
+                <Ionicons name="warning-outline" size={24} color="#EAB308" className="mb-xs" />
+                <Text className="text-sm font-semibold text-yellow-500 text-center">
+                  JS Exception
+                </Text>
+                <Text className="text-[10px] text-muted text-center mt-xs leading-relaxed">
+                  Throws a test JS exception
+                </Text>
+              </Pressable>
+
+              <Pressable
+                onPress={() => {
+                  Alert.alert(
+                    "Trigger Native Crash",
+                    "This will force a native crash. The app will close instantly. Re-open the app to upload the crash report to Sentry.",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Crash App",
+                        style: "destructive",
+                        onPress: () => {
+                          Sentry.nativeCrash();
+                        }
+                      }
+                    ]
+                  );
+                }}
+                className="w-[48%] rounded-xl border border-red-500/30 bg-red-500/10 active:bg-red-500/20 p-md items-center"
+              >
+                <Ionicons name="flame-outline" size={24} color="#EF4444" className="mb-xs" />
+                <Text className="text-sm font-semibold text-red-500 text-center">
+                  Native Crash
+                </Text>
+                <Text className="text-[10px] text-muted text-center mt-xs leading-relaxed">
+                  Triggers nativeCrash()
+                </Text>
+              </Pressable>
+            </View>
+
+            <Text className="text-[10px] text-muted mt-md text-center leading-relaxed">
+              * Note: Native crashes are sent on the subsequent application startup.
+            </Text>
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -81,7 +81,14 @@
           }
         ]
       ],
-      "expo-video"
+      "expo-video",
+      [
+        "@sentry/react-native",
+        {
+          "organization": "arpit-w9",
+          "project": "react-native"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
