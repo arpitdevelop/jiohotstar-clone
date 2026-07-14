@@ -1,22 +1,26 @@
-import React, { useState } from "react";
+import { BottomSheet, RNHostView } from "@expo/ui";
+import { Ionicons } from "@expo/vector-icons";
+import { isGlassEffectAPIAvailable } from "expo-glass-effect";
+import { VideoPlayer } from "expo-video";
+import { useState } from "react";
 import {
   Platform,
-  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { BottomSheet, RNHostView } from "@expo/ui";
-import { Ionicons } from "@expo/vector-icons";
-import { VideoPlayer } from "expo-video";
-import { isGlassEffectAPIAvailable } from "expo-glass-effect";
 
 interface PlayerSettingsSheetProps {
   isPresented: boolean;
   onDismiss: () => void;
   player: VideoPlayer;
-  availableQualities: Array<{ id: string; label: string; sub?: string; url: string }>;
+  availableQualities: Array<{
+    id: string;
+    label: string;
+    sub?: string;
+    url: string;
+  }>;
   selectedQualityId: string;
   onSelectQuality: (opt: any) => void;
 }
@@ -40,7 +44,12 @@ function PlayerSettingsContent({
 }: {
   player: VideoPlayer;
   onDismiss: () => void;
-  availableQualities: Array<{ id: string; label: string; sub?: string; url: string }>;
+  availableQualities: Array<{
+    id: string;
+    label: string;
+    sub?: string;
+    url: string;
+  }>;
   selectedQualityId: string;
   onSelectQuality: (opt: any) => void;
 }) {
@@ -90,7 +99,7 @@ function PlayerSettingsContent({
   if (subtitleOptions.length === 1) {
     subtitleOptions.push(
       { id: "en", label: "English" },
-      { id: "hi", label: "Hindi" }
+      { id: "hi", label: "Hindi" },
     );
   }
 
@@ -133,44 +142,43 @@ function PlayerSettingsContent({
       {/* Title Header */}
       <View className="flex-row items-center justify-between pb-md mb-xs">
         <Text className="text-white text-lg font-bold">Settings</Text>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Text className="text-white/40 text-xs font-semibold">Report an Issue</Text>
-        </TouchableOpacity>
       </View>
 
       {/* Tabs list row */}
       <View className="flex-row border-b border-white/10 mb-md">
-        {(["quality", "audio", "subtitles", "speed"] as TabType[]).map((tab) => {
-          const isActive = activeTab === tab;
-          const label =
-            tab === "quality"
-              ? "Quality"
-              : tab === "audio"
-                ? "Audio Language"
-                : tab === "subtitles"
-                  ? "Subtitles"
-                  : "Speed";
+        {(["quality", "audio", "subtitles", "speed"] as TabType[]).map(
+          (tab) => {
+            const isActive = activeTab === tab;
+            const label =
+              tab === "quality"
+                ? "Quality"
+                : tab === "audio"
+                  ? "Audio Language"
+                  : tab === "subtitles"
+                    ? "Subtitles"
+                    : "Speed";
 
-          return (
-            <TouchableOpacity
-              key={tab}
-              onPress={() => setActiveTab(tab)}
-              className="mr-lg pb-sm relative"
-              activeOpacity={0.7}
-            >
-              <Text
-                className={`text-sm font-semibold ${
-                  isActive ? "text-white" : "text-white/40"
-                }`}
+            return (
+              <TouchableOpacity
+                key={tab}
+                onPress={() => setActiveTab(tab)}
+                className="mr-lg pb-sm relative"
+                activeOpacity={0.7}
               >
-                {label}
-              </Text>
-              {isActive && (
-                <View className="absolute bottom-0 left-0 right-0 h-[2px] bg-white rounded-full" />
-              )}
-            </TouchableOpacity>
-          );
-        })}
+                <Text
+                  className={`text-sm font-semibold ${
+                    isActive ? "text-white" : "text-white/40"
+                  }`}
+                >
+                  {label}
+                </Text>
+                {isActive && (
+                  <View className="absolute bottom-0 left-0 right-0 h-[2px] bg-white rounded-full" />
+                )}
+              </TouchableOpacity>
+            );
+          },
+        )}
       </View>
 
       {/* Settings list container */}
@@ -191,7 +199,9 @@ function PlayerSettingsContent({
                   )}
                 </View>
                 <View className="flex-row items-baseline gap-sm">
-                  <Text className="text-white text-sm font-bold">{opt.label}</Text>
+                  <Text className="text-white text-sm font-bold">
+                    {opt.label}
+                  </Text>
                   {opt.sub ? (
                     <Text className="text-white/40 text-xs font-medium">
                       {opt.sub}
@@ -218,7 +228,9 @@ function PlayerSettingsContent({
                   )}
                 </View>
                 <View className="flex-row items-baseline gap-sm">
-                  <Text className="text-white text-sm font-bold">{opt.label}</Text>
+                  <Text className="text-white text-sm font-bold">
+                    {opt.label}
+                  </Text>
                   {opt.sub ? (
                     <Text className="text-white/40 text-xs font-medium">
                       {opt.sub}
@@ -244,7 +256,9 @@ function PlayerSettingsContent({
                     <Ionicons name="checkmark" size={18} color="#1F80E0" />
                   )}
                 </View>
-                <Text className="text-white text-sm font-bold">{opt.label}</Text>
+                <Text className="text-white text-sm font-bold">
+                  {opt.label}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -264,7 +278,9 @@ function PlayerSettingsContent({
                     <Ionicons name="checkmark" size={18} color="#1F80E0" />
                   )}
                 </View>
-                <Text className="text-white text-sm font-bold">{opt.label}</Text>
+                <Text className="text-white text-sm font-bold">
+                  {opt.label}
+                </Text>
               </TouchableOpacity>
             );
           })}

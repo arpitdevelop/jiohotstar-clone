@@ -3,7 +3,7 @@
     "name": "jiohotstar-clone",
     "slug": "jiohotstar-clone",
     "version": "1.0.0",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "jiohotstarclone",
     "userInterfaceStyle": "dark",
@@ -25,6 +25,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "PORTRAIT_UP"
+        }
+      ],
       [
         "expo-splash-screen",
         {

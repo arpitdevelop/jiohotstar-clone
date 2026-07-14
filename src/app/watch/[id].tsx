@@ -26,6 +26,7 @@ import { useSimilarTv, useTvDetails } from "@/queries/tv.queries";
 import { getReleaseYear } from "@/utils/date";
 import { getContentRating, getLanguageName } from "@/utils/language";
 import { parseHlsPlaylist, HlsStream } from "@/utils/hlsParser";
+import * as ScreenOrientation from "expo-screen-orientation";
 
 
 const HLS_SOURCE_URI =
@@ -79,8 +80,46 @@ export default function WatchScreen() {
 
   const { width, height } = useWindowDimensions();
   const isLandscape = width > height;
+  const isManualToggle = useRef(false);
+  const isLockedToPortrait = useRef(false);
+
+  // Enable auto-rotation on mount, lock to portrait on unmount
+  useEffect(() => {
+    ScreenOrientation.unlockAsync().catch((err) =>
+      console.warn("Failed to unlock orientation on mount:", err)
+    );
+
+    return () => {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP).catch((err) =>
+        console.warn("Failed to lock orientation on unmount:", err)
+      );
+    };
+  }, []);
+
+  const handleToggleFullscreen = async (shouldFullscreen: boolean) => {
+    isManualToggle.current = true;
+    if (shouldFullscreen) {
+      setIsCustomFullscreen(true);
+      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    } else {
+      setIsCustomFullscreen(false);
+      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+    }
+  };
 
   useEffect(() => {
+    if (isManualToggle.current) {
+      if (isLandscape && isCustomFullscreen) {
+        isManualToggle.current = false;
+      } else if (!isLandscape && !isCustomFullscreen) {
+        isManualToggle.current = false;
+        // Keep screen orientation locked to portrait.
+        // We will unlock it on first user interaction with the portrait layout.
+        isLockedToPortrait.current = true;
+      }
+      return;
+    }
+
     if (isLandscape) {
       setIsCustomFullscreen(true);
     } else {
@@ -370,7 +409,7 @@ export default function WatchScreen() {
             <TouchableOpacity
               onPress={() => {
                 if (isCustomFullscreen) {
-                  setIsCustomFullscreen(false);
+                  handleToggleFullscreen(false);
                 } else {
                   router.back();
                 }
@@ -398,7 +437,7 @@ export default function WatchScreen() {
                 <Ionicons name="settings-outline" size={22} color="#FFFFFF" />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setIsCustomFullscreen(!isCustomFullscreen)}
+                onPress={() => handleToggleFullscreen(!isCustomFullscreen)}
                 activeOpacity={0.7}
               >
                 <Ionicons
@@ -562,6 +601,14 @@ export default function WatchScreen() {
             className="flex-1"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 40 }}
+            onTouchStart={() => {
+              if (isLockedToPortrait.current) {
+                isLockedToPortrait.current = false;
+                ScreenOrientation.unlockAsync().catch((err) =>
+                  console.warn("Failed to unlock orientation on touch:", err)
+                );
+              }
+            }}
           >
             {renderPlayer()}
 
