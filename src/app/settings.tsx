@@ -236,7 +236,27 @@ export default function SettingsScreen() {
             </View>
 
             {/* Test Actions */}
-            <View className="flex-row gap-md justify-between">
+            <View className="flex-row flex-wrap gap-y-sm justify-between">
+              <Pressable
+                onPress={() => {
+                  Sentry.captureException(new Error("First error"));
+                  Alert.alert(
+                    "Handled Error Triggered",
+                    "A test exception has been captured and reported to Sentry (without crashing the app).",
+                    [{ text: "OK" }]
+                  );
+                }}
+                className="w-[48%] mb-sm rounded-xl border border-green-500/30 bg-green-500/10 active:bg-green-500/20 p-md items-center"
+              >
+                <Ionicons name="shield-checkmark-outline" size={24} color="#22C55E" className="mb-xs" />
+                <Text className="text-sm font-semibold text-green-500 text-center">
+                  Handled Error
+                </Text>
+                <Text className="text-[10px] text-muted text-center mt-xs leading-relaxed">
+                  Triggers captureException()
+                </Text>
+              </Pressable>
+
               <Pressable
                 onPress={() => {
                   Alert.alert(
@@ -254,7 +274,7 @@ export default function SettingsScreen() {
                     ]
                   );
                 }}
-                className="w-[48%] rounded-xl border border-yellow-500/30 bg-yellow-500/10 active:bg-yellow-500/20 p-md items-center"
+                className="w-[48%] mb-sm rounded-xl border border-yellow-500/30 bg-yellow-500/10 active:bg-yellow-500/20 p-md items-center"
               >
                 <Ionicons name="warning-outline" size={24} color="#EAB308" className="mb-xs" />
                 <Text className="text-sm font-semibold text-yellow-500 text-center">
@@ -282,7 +302,7 @@ export default function SettingsScreen() {
                     ]
                   );
                 }}
-                className="w-[48%] rounded-xl border border-red-500/30 bg-red-500/10 active:bg-red-500/20 p-md items-center"
+                className="w-full rounded-xl border border-red-500/30 bg-red-500/10 active:bg-red-500/20 p-md items-center"
               >
                 <Ionicons name="flame-outline" size={24} color="#EF4444" className="mb-xs" />
                 <Text className="text-sm font-semibold text-red-500 text-center">

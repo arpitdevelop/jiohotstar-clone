@@ -83,3 +83,4 @@ coverage/
 
 # React Native bundle files
 *.hbc
+.env.local

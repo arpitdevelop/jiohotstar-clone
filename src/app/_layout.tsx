@@ -3,9 +3,9 @@ import "../nativewind-setup";
 
 import { QueryProvider } from "@/providers/QueryProvider";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { Stack, useNavigationContainerRef } from "expo-router";
 import * as Sentry from "@sentry/react-native";
 import Constants, { ExecutionEnvironment } from "expo-constants";
+import { Stack, useNavigationContainerRef } from "expo-router";
 import { useEffect } from "react";
 import { configureReanimatedLogger } from "react-native-reanimated";
 
@@ -22,8 +22,10 @@ const navigationIntegration = Sentry.reactNavigationIntegration({
 });
 
 Sentry.init({
-  dsn: process.env.EXPO_PUBLIC_SENTRY_DSN || "https://placeholder-dsn@o0.ingest.sentry.io/0",
-  tracesSampleRate: 1.0,
+  dsn:
+    process.env.EXPO_PUBLIC_SENTRY_DSN ||
+    "https://placeholder-dsn@o0.ingest.sentry.io/0",
+  tracesSampleRate: __DEV__ ? 1.0 : 0.1,
   integrations: [navigationIntegration],
   enableNativeFramesTracking: !isRunningInExpoGo,
 });
@@ -43,8 +45,14 @@ function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="movie/[id]" options={{ headerShown: false }} />
-          <Stack.Screen name="watch/[id]" options={{ headerShown: false, animation: "fade" }} />
-          <Stack.Screen name="settings" options={{ headerShown: false, animation: "slide_from_right" }} />
+          <Stack.Screen
+            name="watch/[id]"
+            options={{ headerShown: false, animation: "fade" }}
+          />
+          <Stack.Screen
+            name="settings"
+            options={{ headerShown: false, animation: "slide_from_right" }}
+          />
           <Stack.Screen name="+not-found" options={{ title: "Oops!" }} />
         </Stack>
       </ThemeProvider>

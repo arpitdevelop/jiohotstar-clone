@@ -94,6 +94,14 @@
           "organization": "arpit-w9",
           "project": "react-native"
         }
+      ],
+      [
+        "@sentry/react-native/expo",
+        {
+          "url": "https://sentry.io/",
+          "project": "react-native",
+          "organization": "arpit-w9"
+        }
       ]
     ],
     "experiments": {

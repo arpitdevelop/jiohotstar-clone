@@ -135,7 +135,7 @@ export default function HomeScreen() {
           onViewableItemsChanged={onViewableItemsChanged}
           viewabilityConfig={viewabilityConfig}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ pb: 180 }}
+          contentContainerStyle={{ paddingBottom: 180 }}
           // Performance Optimization props
           windowSize={5}
           initialNumToRender={4}
